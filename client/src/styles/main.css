@@ -1,0 +1,18 @@
+div.main-container {
+    margin: 0!important;
+    padding: 0!important;
+    overflow-x: hidden;
+    background-color: #14021b;
+    color: #c1d3d9;
+    width: 100vw;
+    height: 100vh;
+}
+
+h1, h5 {
+    font-weight: 400;
+    font-style: normal;
+}
+
+div.main-container div.row {
+    margin-right: 0;
+}
