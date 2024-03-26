@@ -1,25 +1,27 @@
 package org.example.api.controllers;
 
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.example.api.users.data.AuthenticationResponse;
+import org.example.api.users.data.User;
+import org.example.api.users.service.AuthenticationService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class AuthenticationController {
+    private final AuthenticationService authenticationService;
 
-    @GetMapping("/")
-    public String index() {
-        return "index";
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+    @PostMapping("/register")
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody User request) {
+        return ResponseEntity.ok(authenticationService.register(request));
     }
 
-    @GetMapping("/register")
-    public String register() {
-        return "register";
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody User request) {
+        return ResponseEntity.ok(authenticationService.login(request));
     }
 }
