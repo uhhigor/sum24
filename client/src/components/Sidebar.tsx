@@ -1,5 +1,5 @@
 import { FaChartLine, FaGaugeHigh, FaPowerOff } from "react-icons/fa6";
-import photo from '../assets/avatar.jpg';
+import photo from "../assets/avatar.jpg";
 import '../styles/sidebar.css'
 
 export const Sidebar = () => {
