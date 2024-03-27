@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {FcApproval, FcHighPriority} from "react-icons/fc";
 import {Col, Row} from "react-bootstrap";
 import '../styles/service.css';
+import {Link} from "react-router-dom";
 
 
 interface Service {
@@ -10,24 +11,29 @@ interface Service {
     address: string;
 }
 
-export const Service : React.FC = () => {
+interface ServiceProps {
+    index: number;
+}
 
+export const Service: React.FC<ServiceProps> = ({index}) => {
+
+    // const [service, setService] = useState<Service | null>(null);
     const [services, setServices] = useState<Service[]>([]);
-
     // useEffect(() => {
-    //     fetchServices().then(r => console.log('Services fetched'));
+    //     // Fetch service data when component mounts
+    //     fetchServiceData();
     // }, []);
     //
-    // const fetchServices = async () => {
+    // const fetchServiceData = async () => {
     //     try {
-    //         const response = await fetch('http://localhost:8080/services');
+    //         const response = await fetch(`http://localhost:8080/services/${index}`);
     //         if (!response.ok) {
-    //             console.error('Failed to fetch services:', response);
+    //             console.error('Failed to fetch service:', response);
     //         }
-    //         const data: Service[] = await response.json();
-    //         setServices(data);
+    //         const data = await response.json();
+    //         setService(data);
     //     } catch (error) {
-    //         console.error('Error fetching services:', error);
+    //         console.error('Error fetching service:', error);
     //     }
     // };
 
@@ -35,23 +41,48 @@ export const Service : React.FC = () => {
         if (true) {
             return <FcApproval size={20}/>
         } else {
-            return <FcHighPriority  size={20}/>
+            return <FcHighPriority size={20}/>
         }
     }
 
+
+    async function editService(serviceId: number, updatedServiceData: any) {
+        try {
+            const response = await fetch(`http://localhost:8080/services/${serviceId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedServiceData),
+            });
+            if (!response.ok) {
+                console.error('Failed to edit service:', response);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error editing service:', error);
+            throw error;
+        }
+    }
+
+    async function deleteService(serviceId: number) {
+        try {
+            const response = await fetch(`http://localhost:8080/services/${serviceId}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                console.error('Failed to delete service:', response);
+            }
+            return serviceId;
+        } catch (error) {
+            console.error('Error deleting service:', error);
+            throw error;
+        }
+    }
+
+
     return (
         <div className="m-2 service-container">
-            {/*<h2>Services</h2>*/}
-            {/*<ul>*/}
-            {/*    {services.map(service => (*/}
-            {/*        <li key={service.id}>*/}
-            {/*            <p>ID: {service.id}</p>*/}
-            {/*            <p>Name: {service.name}</p>*/}
-            {/*            <p>Address: {service.address}</p>*/}
-            {/*        </li>*/}
-            {/*    ))}*/}
-            {/*</ul>*/}
-
             <h5>Service name</h5>
             <p>Service address</p>
             <Row className="align-items-center justify-content-center">
@@ -63,10 +94,34 @@ export const Service : React.FC = () => {
                 </Col>
             </Row>
             <div className="mt-4">
-                <button className="btn">View</button>
-                <button className="m-lg-3 btn">Edit</button>
-                <button className="btn">Delete</button>
+                <Link to={"https://ftims.edu.p.lodz.pl/"}>
+                    <button className="btn">View</button>
+                </Link>
+                <button className="m-lg-3 btn" onClick={() => editService(index, "mockData")}>Edit</button>
+                <button className="btn" onClick={() => deleteService(index)}>Delete</button>
             </div>
+
+            {/*{service && (*/}
+            {/*    <>*/}
+            {/*        <h5>{service.name}</h5>*/}
+            {/*        <p>{service.address}</p>*/}
+            {/*        <Row className="align-items-center justify-content-center">*/}
+            {/*            <Col>*/}
+            {/*                <div>Status:</div>*/}
+            {/*            </Col>*/}
+            {/*            <Col>*/}
+            {/*                {imageRender()}*/}
+            {/*            </Col>*/}
+            {/*        </Row>*/}
+            {/*        <div className="mt-4">*/}
+            {/*            <Link to={service.address}>*/}
+            {/*                <button className="btn">View</button>*/}
+            {/*            </Link>*/}
+            {/*            <button className="m-lg-3 btn" onClick={() => editService(index, "mockData")}>Edit</button>*/}
+            {/*            <button className="btn" onClick={() => deleteService(index)}>Delete</button>*/}
+            {/*        </div>*/}
+            {/*    </>*/}
+            {/*)}*/}
 
         </div>
     );
