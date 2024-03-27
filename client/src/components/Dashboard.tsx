@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Container, Row, Col} from 'react-bootstrap';
 import {Service} from "./Service";
 import chunk from 'lodash-es/chunk';
+import {Link} from "react-router-dom";
+
 interface Service {
     id: number;
     name: string;
@@ -42,38 +44,12 @@ export const Dashboard = () => {
         //     ))}
         // </Container>
         <Container>
-            <button className="btn m-5 btn-lg">Add service</button>
+            <Link to={'/add-service'}>
+                <button className="btn m-3 mt-5 mb-5 btn-lg">Add service</button>
+            </Link>
             <Row>
                 <Col md={4}>
                     <Service index={0}/>
-                </Col>
-                <Col md={4}>
-                    <Service index={1}/>
-                </Col>
-                <Col md={4}>
-                    <Service index={2}/>
-                </Col>
-            </Row>
-            <Row>
-                <Col md={4}>
-                    <Service index={3}/>
-                </Col>
-                <Col md={4}>
-                    <Service index={4}/>
-                </Col>
-                <Col md={4}>
-                    <Service index={5}/>
-                </Col>
-            </Row>
-            <Row>
-                <Col md={4}>
-                    <Service index={6}/>
-                </Col>
-                <Col md={4}>
-                    <Service index={7}/>
-                </Col>
-                <Col md={4}>
-                    <Service index={8}/>
                 </Col>
             </Row>
         </Container>

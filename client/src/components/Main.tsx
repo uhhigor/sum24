@@ -15,7 +15,7 @@ export const Main = () => {
                 <div className="col-10">
                     <div className="row">
                         <div className="col-6">
-                            <h1 className="ms-5 mt-3">DASHBOARD</h1>
+                            <h1 className="ms-3 mt-3">DASHBOARD</h1>
                         </div>
                     </div>
                     <Dashboard />
