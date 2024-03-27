@@ -1,6 +1,7 @@
 import React from "react";
 import { Sidebar } from "./Sidebar";
 import '../styles/main.css'
+import {Dashboard} from "./Dashboard";
 
 export const Main = () => {
     return (
@@ -17,20 +18,7 @@ export const Main = () => {
                             <h1 className="ms-5 mt-3">DASHBOARD</h1>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col-6">
-                            <div className="row justify-content-center">
-                                
-                            </div>
-                        </div>
-                        <div className="col-6">
-                            <div className="row justify-content-center">
-                                <div className="col-10 m-3 widget">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Dashboard />
                 </div>
                 {/* Workhours */}
             </div>
