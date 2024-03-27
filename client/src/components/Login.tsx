@@ -8,7 +8,9 @@ export const Login = () => {
     const [user, setUser] = useState({ username: '', password: ''})
     
     const handleChange = (e: any) => {
-        setUser({ ...user, [e.target.name]: e.target.name });
+        console.log(e.target.name);
+        console.log(e.target.value);
+        setUser({ ...user, [e.target.name]: e.target.value });
     }
 
     const login = () => {
@@ -27,9 +29,9 @@ export const Login = () => {
                 <h1 className="mt-5 ms-4 align-self-start">LOGIN</h1>
                 <input 
                 onChange={handleChange}
-                className="form-control email mt-5" 
-                placeholder="Enter email" 
-                type="email" name="email" id="email" />
+                className="form-control username mt-5" 
+                placeholder="Enter username" 
+                type="text" name="username" id="username" />
                 
                 <input
                 onChange={handleChange}

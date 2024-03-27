@@ -8,7 +8,7 @@ export const Signup = () => {
     const [user, setUser] = useState({ username: '', password: ''})
     
     const handleChange = (e: any) => {
-        setUser({ ...user, [e.target.name]: e.target.name });
+        setUser({ ...user, [e.target.name]: e.target.value });
     }
 
     const register = () => {
@@ -27,7 +27,7 @@ export const Signup = () => {
                 <h1 className="mt-5 ms-4 align-self-start">SIGN UP</h1>
                 <input 
                 onChange={handleChange}
-                className="form-control email mt-5" 
+                className="form-control username mt-5" 
                 placeholder="Enter username" 
                 type="text" name="username" id="username" />
                 
