@@ -28,6 +28,9 @@ public class AuthenticationService {
     public AuthenticationResponse register(User request) {
         User user = new User();
         user.setUsername(request.getUsername());
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
 
