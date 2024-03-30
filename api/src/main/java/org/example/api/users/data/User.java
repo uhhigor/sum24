@@ -3,10 +3,11 @@ package org.example.api.users.data;
 import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import org.example.api.services.data.Service;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,11 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private Role role;
+
+    @OneToMany
+    @JsonManagedReference
+    @JsonIgnore
+    private List<Service> services;
 
     public Integer getId() {
         return id;
@@ -87,6 +93,14 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(username));
+    }
+
+    public List<Service> getServices() {
+        return services.stream().toList();
+    }
+
+    public void addService(Service service) {
+        services.add(service);
     }
 
 }
