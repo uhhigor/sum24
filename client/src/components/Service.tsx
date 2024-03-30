@@ -3,6 +3,7 @@ import {FcApproval, FcHighPriority} from "react-icons/fc";
 import {Col, Row} from "react-bootstrap";
 import '../styles/service.css';
 import {Link} from "react-router-dom";
+import {getAuthToken} from "../validateUser";
 
 
 interface Service {
@@ -22,7 +23,6 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
 
     useEffect(() => {
         fetchServiceData();
-        setService({ id: 1, name: "Home", address: "https://p.lodz.pl/" })
     }, []);
 
     useEffect(() => {
@@ -32,7 +32,11 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
 
     const fetchServiceData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/services/${index}`);
+            const response = await fetch(`http://localhost:8080/services/${index}`, {
+                headers: {
+                    'Authorization': "Bearer " + getAuthToken() as string
+                }
+            });
             if (!response.ok) {
                 console.error('Failed to fetch service:', response);
             }
@@ -65,35 +69,17 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
         }
     }
 
-
-    async function editService(serviceId: number, updatedServiceData: any) {
+    async function deleteService() {
         try {
-            const response = await fetch(`http://localhost:8080/services/${serviceId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedServiceData),
-            });
-            if (!response.ok) {
-                console.error('Failed to edit service:', response);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Error editing service:', error);
-            throw error;
-        }
-    }
-
-    async function deleteService(serviceId: number) {
-        try {
-            const response = await fetch(`http://localhost:8080/services/${serviceId}`, {
+            const response = await fetch(`http://localhost:8080/services/${index}`, {
                 method: 'DELETE',
+                headers: {
+                    Authorization: 'Bearer ' + getAuthToken() as string
+                }
             });
             if (!response.ok) {
                 console.error('Failed to delete service:', response);
             }
-            return serviceId;
         } catch (error) {
             console.error('Error deleting service:', error);
             throw error;
@@ -117,8 +103,10 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
                 <Link to={service?.address as string} target="_blank" rel="noopener noreferrer">
                     <button className="btn">View</button>
                 </Link>
-                <button className="m-lg-3 btn" onClick={() => editService(index, "mockData")}>Edit</button>
-                <button className="btn" onClick={() => deleteService(index)}>Delete</button>
+                <Link to={'/edit-service'}>
+                    <button className="btn mx-3">Edit</button>
+                </Link>
+                <button className="btn" onClick={() => deleteService()}>Delete</button>
             </div>
 
         </div>
