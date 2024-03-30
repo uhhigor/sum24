@@ -23,7 +23,7 @@ public class User implements UserDetails {
     private String password;
     private Role role;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     @JsonManagedReference
     @JsonIgnore
     private List<Service> services;

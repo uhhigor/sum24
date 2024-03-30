@@ -20,12 +20,15 @@ public class Service {
 
     private String address;
 
+    private int port;
+
     public Service() {
     }
 
-    public Service(String name, String address) {
+    public Service(String name, String address, int port) {
         this.name = name;
         this.address = address;
+        this.port = port;
     }
 
     public int getId() {
@@ -40,6 +43,8 @@ public class Service {
         return address;
     }
 
+    public int getPort() {return port;}
+
     public User getOwner() {return owner;}
 
     public void setName(String name) {
@@ -50,6 +55,8 @@ public class Service {
         this.address = address;
     }
 
+    public void setPort(int port) {this.port = port;}
+
     public void setOwner(User user) {this.owner = user;}
 
     @Override
@@ -59,6 +66,7 @@ public class Service {
                 ", name='" + name + '\'' +
                 ", owner='" + owner + '\'' +
                 ", address='" + address + '\'' +
+                ", port='" + port + '\'' +
                 '}';
     }
 
@@ -67,6 +75,7 @@ public class Service {
         if(serviceDTO.isValid()) {
             this.name = serviceDTO.getName();
             this.address = serviceDTO.getAddress();
+            this.port = serviceDTO.getPort();
         } else {
             throw new IllegalArgumentException("Invalid service data");
         }
