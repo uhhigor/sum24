@@ -100,7 +100,7 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
                 </Col>
             </Row>
             <div className="mt-4">
-                <Link to={service?.address as string} target="_blank" rel="noopener noreferrer">
+                <Link to={'https://'+ service?.address as string} target="_blank" rel="noopener noreferrer">
                     <button className="btn">View</button>
                 </Link>
                 <Link to={'/edit-service'}>

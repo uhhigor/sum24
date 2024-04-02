@@ -1,7 +1,7 @@
 import React from "react";
 import { Sidebar } from "./Sidebar";
-import '../styles/main.css'
-import {ServicesController} from "./ServicesController";
+import {ServicesController} from './ServicesController';
+import '../styles/dashboard.css';
 
 export const Dashboard = () => {
     return (

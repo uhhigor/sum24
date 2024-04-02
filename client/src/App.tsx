@@ -5,6 +5,7 @@ import { Login } from './components/Login';
 import { Signup } from './components/Signup';
 import { Dashboard } from './components/Dashboard';
 import {AddService} from "./components/AddService";
+import {EditService} from './components/EditService';
 import {TableCreation} from "./components/TableCreation";
 import {EditService} from "./components/EditService";
 import {Main} from "./components/Main";
