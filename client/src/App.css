@@ -8,3 +8,7 @@ body {
   width: 100vw !important;
   height: 100vh !important;
 }
+
+button.btn {
+  background-color: #c49cff;
+}

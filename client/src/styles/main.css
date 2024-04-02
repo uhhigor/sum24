@@ -1,0 +1,38 @@
+.main-container {
+    background-image: url('../resources/bcg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #dab4da !important;
+    font-size: 60px;
+    text-align: center;
+}
+
+.main-container .btn {
+    background-color: transparent;
+    color: #dab4da;
+}
+
+@keyframes flash {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.welcomeText {
+    animation: flash 2s linear infinite;
+}
+
+.paused {
+    animation-play-state: paused;
+}
+
+.btn:hover .main-container {
+    animation: flash 1s linear infinite;
+}
