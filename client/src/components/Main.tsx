@@ -25,11 +25,11 @@ export const Main : React.FC = () => {
     };
 
     return (
-        <div className="main-container">
-            <div className="d-flex justify-content-center align-items-center min-vh-100">
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col text-center">
+        <div>
+            <div className="d-flex justify-content-center align-items-center min-vh-100 main-container">
+                <div className="container-fluid ">
+                    <div className="row ">
+                        <div className="col text-center ">
                             <div className={`welcomeText ${isButtonHovered ? 'paused' : ''}`}>Welcome!
                             </div>
                             <button

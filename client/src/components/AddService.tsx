@@ -1,5 +1,5 @@
 import React from "react";
-import  "../styles/addService.css";
+import  "../styles/login.css";
 export const AddService = () => {
     return (
         <div className="align-content-center addService-container">

@@ -5,7 +5,7 @@ import '../styles/dashboard.css';
 
 export const Dashboard = () => {
     return (
-        <div className="main-container">
+        <div>
             <div className="row">
                 <div className="col-2">
                     <Sidebar />

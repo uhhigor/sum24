@@ -3,14 +3,14 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    color: #dab4da !important;
+    color: #9f7b9f !important;
     font-size: 60px;
     text-align: center;
 }
 
 .main-container .btn {
     background-color: transparent;
-    color: #dab4da;
+    color: #9f7b9f;
 }
 
 @keyframes flash {

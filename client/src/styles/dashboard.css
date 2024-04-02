@@ -2,7 +2,7 @@ div.main-container {
     margin: 0!important;
     padding: 0!important;
     overflow-x: hidden;
-    background-color: #14021b;
+    background-color: #14021b !important;
     color: #c1d3d9;
     width: 100vw;
     height: 100vh;
