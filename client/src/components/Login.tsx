@@ -6,10 +6,9 @@ import axios from "axios";
 export const Login = () => {
 
     const [user, setUser] = useState({ username: '', password: ''})
+    const [message, setMessage] = useState("");
     
     const handleChange = (e: any) => {
-        console.log(e.target.name);
-        console.log(e.target.value);
         setUser({ ...user, [e.target.name]: e.target.value });
     }
 
@@ -18,8 +17,9 @@ export const Login = () => {
             .then(response => {
                 console.log("Login complete");
             })
-            .catch(error => {
-                console.error(error);
+            .catch((error:any) => {
+                setMessage(error.response.data.message);
+                console.error(error.response.data.message);
             })
     }
     
@@ -44,6 +44,10 @@ export const Login = () => {
                 className="btn mt-5">Log in</button>
 
                 <span className="mt-5">Do not have account? <Link to={'/signup'}>Sign up</Link></span>
+                {
+                    message !== "" &&
+                    <span className="mt-4 text-danger">{message}</span>
+                }
             </div>
         </div>
     )
