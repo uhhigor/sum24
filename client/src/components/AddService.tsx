@@ -4,7 +4,7 @@ import axios from "axios";
 import {getAuthToken} from "../validateUser";
 export const AddService = () => {
 
-    const [service, setService] = useState({ name: '', address: ''})
+    const [service, setService] = useState({ name: '', address: '', port: ''})
 
     const handleChange = (e: any) => {
         console.log(e.target.name);
@@ -13,10 +13,10 @@ export const AddService = () => {
     }
 
     const addService = () => {
-        axios.post('http://localhost:8080/services/', service, {
+        axios.post(`http://localhost:8080/services/user/1054`, service, {
             headers: {
-                Authorization: `Bearer ${getAuthToken()}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'Authorization': "Bearer " + getAuthToken() as string
             }
         })
             .then(response => {
@@ -48,6 +48,11 @@ export const AddService = () => {
                     placeholder="Enter address"
                     type="text" name="address" id="addr" />
 
+                <input
+                    onChange={handleChange}
+                    className="form-control password mt-3"
+                    placeholder="Enter port"
+                    type="text" name="port" id="por" />
                 <button
                     onClick={addService}
                     className="btn mt-5">Add service</button>

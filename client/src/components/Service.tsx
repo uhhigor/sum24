@@ -4,12 +4,14 @@ import {Col, Row} from "react-bootstrap";
 import '../styles/service.css';
 import {Link} from "react-router-dom";
 import {getAuthToken} from "../validateUser";
+import axios from "axios";
 
 
 interface Service {
     id: number;
     name: string;
     address: string;
+    port: string;
 }
 
 interface ServiceProps {
@@ -69,28 +71,35 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
         }
     }
 
-    async function deleteService() {
-        try {
-            const response = await fetch(`http://localhost:8080/services/${index}`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: 'Bearer ' + getAuthToken() as string
-                }
-            });
-            if (!response.ok) {
-                console.error('Failed to delete service:', response);
+    const deleteService = ()  => {
+        axios.delete(`http://localhost:8080/services/${index}`,{
+            headers: {
+                'Authorization': "Bearer " + getAuthToken() as string
             }
-        } catch (error) {
-            console.error('Error deleting service:', error);
-            throw error;
-        }
+
+        })
+            .then(response => {
+                if(response.status === 200) {
+                    console.log("deleted item")
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            })
     }
 
+    const propsToEdit = {
+        name: service?.name,
+        address: service?.address,
+        port: service?.port
+    }
 
     return (
         <div className="m-2 service-container">
             <h5>{service?.name}</h5>
             <p>{service?.address}</p>
+            <p>{service?.port}</p>
             <Row className="align-items-center justify-content-center">
                 <Col>
                     <div>Status:</div>
@@ -103,11 +112,12 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
                 <Link to={'https://'+ service?.address as string} target="_blank" rel="noopener noreferrer">
                     <button className="btn">View</button>
                 </Link>
-                <Link to={'/edit-service'}>
+                <Link to={`/edit-service/${index}`} state={propsToEdit}>
                     <button className="btn mx-3">Edit</button>
                 </Link>
                 <button className="btn" onClick={() => deleteService()}>Delete</button>
             </div>
+
 
         </div>
     );

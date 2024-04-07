@@ -5,10 +5,9 @@ import { Login } from './components/Login';
 import { Signup } from './components/Signup';
 import { Dashboard } from './components/Dashboard';
 import {AddService} from "./components/AddService";
-import {EditService} from './components/EditService';
 import {TableCreation} from "./components/TableCreation";
-import {EditService} from "./components/EditService";
 import {Main} from "./components/Main";
+import EditService from "./components/EditService";
 
 function App() {
     return (
@@ -19,7 +18,7 @@ function App() {
                 <Route path='/signup' element={<Signup/>}/>
                 <Route path='/add-service' element={<AddService/>}/>
                 <Route path='/' element={<Main/>}/>
-                <Route path='/edit-service' element={<EditService/>}/>
+                <Route path='/edit-service/:index' element={<EditService name="" address="" port="" />}/>
                 <Route path='/create-table' element={ <TableCreation /> } />
             </Routes>
         </BrowserRouter>
