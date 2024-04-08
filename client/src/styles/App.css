@@ -12,3 +12,8 @@ body {
 button.btn {
   background-color: #c49cff;
 }
+
+button.btn:hover {
+  background-color: #592a9d;
+  color: #270334;
+}

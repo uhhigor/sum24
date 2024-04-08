@@ -1,0 +1,10 @@
+div.addService-form,
+div.editService-form {
+    height: 65vh !important;
+}
+
+
+div.editService-form .btn:hover,
+div.addService-form .btn:hover{
+    color: #a63aa6;
+}
