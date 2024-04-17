@@ -12,7 +12,7 @@ export const Sidebar = () => {
             </div>
 
             <div className="sidebar-nav">
-                <a href="" className="sidebar-item">
+                <a href="/create-table" className="sidebar-item">
                     <div className="sidebar-item-content">
                         <FaChartLine />
                         <span>Option 1</span>
