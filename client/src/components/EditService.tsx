@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import "../styles/login.css";
 import "../styles/servicesForms.css";
-import {getAuthToken} from "../validateUser";
 import axios from "axios";
 import {Link, useParams} from "react-router-dom";
+import {getAuthToken} from "../validateUser";
 
 interface EditServiceProps {
     name: string;

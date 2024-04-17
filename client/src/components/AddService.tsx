@@ -2,8 +2,8 @@ import React, {useState} from "react";
 import "../styles/login.css";
 import "../styles/servicesForms.css";
 import axios from "axios";
-import {getAuthToken} from "../validateUser";
 import {Link} from "react-router-dom";
+import {getAuthToken} from "../validateUser";
 
 export const AddService = () => {
 
@@ -60,7 +60,7 @@ export const AddService = () => {
                     <div className="col">
                         <button
                             onClick={addService}
-                            className="btn px-5 me-4">Edit
+                            className="btn px-5 me-4">Add
                         </button>
                     </div>
                     <div className="col">
