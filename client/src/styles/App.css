@@ -1,0 +1,19 @@
+body {
+  font-family: "Chakra Petch", sans-serif !important;
+  margin: 0!important;
+  padding: 0!important;
+  overflow-x: hidden !important;
+  background-color: #14021b !important;
+  color: #c1d3d9 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+button.btn {
+  background-color: #c49cff;
+}
+
+button.btn:hover {
+  background-color: #592a9d;
+  color: #270334;
+}
