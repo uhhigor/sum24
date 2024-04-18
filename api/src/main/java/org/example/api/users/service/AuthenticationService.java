@@ -1,10 +1,12 @@
 package org.example.api.users.service;
 
+import java.util.Optional;
 import org.example.api.users.data.AuthenticationResponse;
 import org.example.api.users.data.User;
 import org.example.api.users.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class AuthenticationService {
     public AuthenticationResponse register(User request) {
         User user = new User();
         user.setUsername(request.getUsername());
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            return new AuthenticationResponse(409);
+        }
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
 
@@ -38,12 +43,22 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse login(User request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),
-                request.getPassword()));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),
+                    request.getPassword()));
 
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        String token = jwtService.generateToken(user);
-        return new AuthenticationResponse(token);
+            Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
+            if (!optionalUser.isPresent()) {
+                return new AuthenticationResponse(404);
+            }
+
+            User user = optionalUser.get();
+            
+            String token = jwtService.generateToken(user);
+            return new AuthenticationResponse(token);
+        } catch (AuthenticationException e) {
+            return new AuthenticationResponse(404);
+        }
+        
     }
 }
