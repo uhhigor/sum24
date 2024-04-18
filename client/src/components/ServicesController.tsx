@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {Container, Row, Col} from 'react-bootstrap';
 import {Service} from "./Service";
-import chunk from 'lodash-es/chunk';
+import chunk from "lodash-es/chunk";
 import {Link} from "react-router-dom";
-import {getAuthToken} from "../validateUser";
+import {getAuthToken, getUsername} from "../validateUser";
+import axios from "axios";
 
 interface Service {
     id: number;
@@ -16,8 +17,22 @@ export const ServicesController = () => {
 
 
     useEffect(() => {
+        getId().then(r => console.log('UserId fetched'));
         fetchServices().then(r => console.log('ServicesControler fetched'));
     }, []);
+
+    const getId = async () => {
+        axios.get(`http://localhost:8080/login/${getUsername()}`)
+            .then(response => {
+                if (response.status === 200) {
+                    localStorage.setItem('userId', response.data);
+                    console.log("USERID" + response.data)
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
 
     const fetchServices = async () => {
         try {

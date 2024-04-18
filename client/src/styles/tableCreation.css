@@ -1,0 +1,37 @@
+div.fetchTableDataForm {
+    border-radius: 20px;
+    background-color: #300E3E;
+    height: 25vh;
+    font-weight: 400;
+    font-style: normal;
+    color: #c1d3d9;
+    width: 30vw;
+}
+
+div.fetchTableDataForm select {
+    width: 50%;
+    background-color: #4d1663;
+    border: none;
+    color: #c1d3d9;
+}
+
+div.fetchTableDataForm select.rowsSelect {
+    margin-left: 27px !important;
+}
+
+.buttonBack {
+    margin-left: 60px !important;
+}
+
+div.fetchTableDataForm button.btn {
+    background-color: #c49cff;
+}
+
+div.fetchTableDataForm span {
+    color: #c1d3d967;
+}
+
+div.fetchTableDataForm .btn:hover {
+    background-color: #592a9d;
+    color: #270334;
+}

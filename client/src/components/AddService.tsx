@@ -3,7 +3,7 @@ import "../styles/login.css";
 import "../styles/servicesForms.css";
 import axios from "axios";
 import {Link} from "react-router-dom";
-import {getAuthToken} from "../validateUser";
+import {getAuthToken, getUserId, getUsername} from "../validateUser";
 
 export const AddService = () => {
 
@@ -16,7 +16,7 @@ export const AddService = () => {
     }
 
     const addService = () => {
-        axios.post(`http://localhost:8080/services/user/1054`, service, {
+        axios.post(`http://localhost:8080/services/user/${getUserId()}`, service, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': "Bearer " + getAuthToken() as string

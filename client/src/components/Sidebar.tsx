@@ -1,21 +1,26 @@
 import { FaChartLine, FaGaugeHigh, FaPowerOff } from "react-icons/fa6";
 import photo from "../resources/avatar.jpg";
 import '../styles/sidebar.css'
+import {getUsername} from "../validateUser";
 
 export const Sidebar = () => {
+    function signOut() {
+        localStorage.clear();
+        window.location.href = '/login';
+    }
+
     return (
         <div className="sidebar-container">
             <div className="sidebar-header">
                 <img src={photo} alt="Avatar" />
-                <span className="username">username</span>
-                <span className="email">email</span>
+                <span className="username">{getUsername()}</span>
             </div>
 
             <div className="sidebar-nav">
                 <a href="/create-table" className="sidebar-item">
                     <div className="sidebar-item-content">
                         <FaChartLine />
-                        <span>Option 1</span>
+                        <span>Services data</span>
                     </div>
                 </a>
                 <a
@@ -31,7 +36,7 @@ export const Sidebar = () => {
                 <a className="sidebar-item signout">
                     <div className="sidebar-item-content">
                         <FaPowerOff />
-                        <span>Sign out</span>
+                        <span onClick={signOut}>Sign out</span>
                     </div>
                 </a>
             </div>

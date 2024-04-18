@@ -2,6 +2,18 @@ import React, { useEffect, useState } from "react";
 import "../styles/login.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
+
+interface DecodedToken {
+    sub: string;
+    iat: number;
+    exp: number;
+}
+
+function isDecodedToken(token: any): token is DecodedToken {
+    return typeof token === 'object' && token !== null && 'sub' in token;
+}
+
 
 export const Signup = () => {
 
@@ -18,6 +30,13 @@ export const Signup = () => {
                 console.log("Register complete");
                 if(response.status === 200) {
                     localStorage.setItem('authToken', response.data.token);
+                    const decodedToken : DecodedToken = jwtDecode(response.data.token);
+                    if (isDecodedToken(decodedToken)) {
+                        const extractedUsername = decodedToken.sub;
+
+                        localStorage.setItem('username', extractedUsername);
+
+                    }
                     window.location.href = '/dashboard';
                 }
             })
