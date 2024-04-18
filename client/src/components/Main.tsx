@@ -1,28 +1,58 @@
-import React from "react";
-import { Sidebar } from "./Sidebar";
-import '../styles/main.css'
-import {Dashboard} from "./Dashboard";
+import React, {useState} from "react";
+import "../styles/main.css";
+import {useNavigate} from "react-router-dom";
 
-export const Main = () => {
+export const Main : React.FC = () => {
+    const [isButtonHovered, setIsButtonHovered] = useState(false);
+    let navigate = useNavigate();
+
+    const handleButtonHover = () => {
+        setIsButtonHovered(true);
+    };
+
+    const handleButtonLeave = () => {
+        setIsButtonHovered(false);
+    };
+
+    const goToLoginPage = () => {
+        const path = `/login`;
+
+        navigate(path);
+    };
+    const goToRegisterPage = () => {
+        const path = `/signup`;
+        navigate(path)
+    };
+
     return (
-        <div className="main-container">
-            <div className="row">
-                <div className="col-2">
-                    <Sidebar />
-                </div>
-
-                {/* Workhours */}
-                <div className="col-10">
-                    <div className="row">
-                        <div className="col-6">
-                            <h1 className="ms-3 mt-3">DASHBOARD</h1>
+        <div>
+            <div className="d-flex justify-content-center align-items-center min-vh-100 main-container">
+                <div className="container-fluid ">
+                    <div className="row ">
+                        <div className="col text-center ">
+                            <div className={`welcomeText ${isButtonHovered ? 'paused' : ''}`}>Welcome!
+                            </div>
+                            <button
+                                className="btn btn-lg m-5"
+                                onMouseEnter={handleButtonHover}
+                                onMouseLeave={handleButtonLeave}
+                                onClick={goToRegisterPage}
+                            >
+                                Register here!
+                            </button>
+                            <button
+                                className="btn btn-lg m-5"
+                                onMouseEnter={handleButtonHover}
+                                onMouseLeave={handleButtonLeave}
+                                onClick={goToLoginPage}
+                            >
+                                Log in here!
+                            </button>
                         </div>
                     </div>
-                    <Dashboard />
                 </div>
-                {/* Workhours */}
             </div>
-            {/* row */}
         </div>
+
     )
 }

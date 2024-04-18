@@ -1,18 +1,38 @@
-div.main-container {
-    margin: 0!important;
-    padding: 0!important;
-    overflow-x: hidden;
-    background-color: #14021b;
-    color: #c1d3d9;
-    width: 100vw;
-    height: 100vh;
+.main-container {
+    background-image: url('../resources/bcg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #9f7b9f !important;
+    font-size: 60px;
+    text-align: center;
 }
 
-h1, h5 {
-    font-weight: 400;
-    font-style: normal;
+.main-container .btn {
+    background-color: transparent;
+    color: #9f7b9f;
 }
 
-div.main-container div.row {
-    margin-right: 0;
+@keyframes flash {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.welcomeText {
+    animation: flash 2s linear infinite;
+}
+
+.paused {
+    animation-play-state: paused;
+}
+
+.btn:hover .main-container {
+    animation: flash 1s linear infinite;
 }

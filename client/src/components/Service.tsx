@@ -3,12 +3,15 @@ import {FcApproval, FcHighPriority} from "react-icons/fc";
 import {Col, Row} from "react-bootstrap";
 import '../styles/service.css';
 import {Link} from "react-router-dom";
+import {getAuthToken} from "../validateUser";
+import axios from "axios";
 
 
 interface Service {
     id: number;
     name: string;
     address: string;
+    port: string;
 }
 
 interface ServiceProps {
@@ -22,7 +25,6 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
 
     useEffect(() => {
         fetchServiceData();
-        setService({ id: 1, name: "Home", address: "https://p.lodz.pl/" })
     }, []);
 
     useEffect(() => {
@@ -32,7 +34,11 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
 
     const fetchServiceData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/services/${index}`);
+            const response = await fetch(`http://localhost:8080/services/${index}`, {
+                headers: {
+                    'Authorization': "Bearer " + getAuthToken() as string
+                }
+            });
             if (!response.ok) {
                 console.error('Failed to fetch service:', response);
             }
@@ -65,46 +71,35 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
         }
     }
 
-
-    async function editService(serviceId: number, updatedServiceData: any) {
-        try {
-            const response = await fetch(`http://localhost:8080/services/${serviceId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedServiceData),
-            });
-            if (!response.ok) {
-                console.error('Failed to edit service:', response);
+    const deleteService = ()  => {
+        axios.delete(`http://localhost:8080/services/${index}`,{
+            headers: {
+                'Authorization': "Bearer " + getAuthToken() as string
             }
-            return await response.json();
-        } catch (error) {
-            console.error('Error editing service:', error);
-            throw error;
-        }
+
+        })
+            .then(response => {
+                if(response.status === 200) {
+                    console.log("deleted item")
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            })
     }
 
-    async function deleteService(serviceId: number) {
-        try {
-            const response = await fetch(`http://localhost:8080/services/${serviceId}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) {
-                console.error('Failed to delete service:', response);
-            }
-            return serviceId;
-        } catch (error) {
-            console.error('Error deleting service:', error);
-            throw error;
-        }
+    const propsToEdit = {
+        name: service?.name,
+        address: service?.address,
+        port: service?.port
     }
-
 
     return (
         <div className="m-2 service-container">
             <h5>{service?.name}</h5>
             <p>{service?.address}</p>
+            <p>{service?.port}</p>
             <Row className="align-items-center justify-content-center">
                 <Col>
                     <div>Status:</div>
@@ -114,12 +109,15 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
                 </Col>
             </Row>
             <div className="mt-4">
-                <Link to={service?.address as string} target="_blank" rel="noopener noreferrer">
+                <Link to={'https://'+ service?.address as string} target="_blank" rel="noopener noreferrer">
                     <button className="btn">View</button>
                 </Link>
-                <button className="m-lg-3 btn" onClick={() => editService(index, "mockData")}>Edit</button>
-                <button className="btn" onClick={() => deleteService(index)}>Delete</button>
+                <Link to={`/edit-service/${index}`} state={propsToEdit}>
+                    <button className="btn mx-3">Edit</button>
+                </Link>
+                <button className="btn" onClick={() => deleteService()}>Delete</button>
             </div>
+
 
         </div>
     );

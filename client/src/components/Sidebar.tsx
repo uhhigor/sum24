@@ -1,5 +1,5 @@
 import { FaChartLine, FaGaugeHigh, FaPowerOff } from "react-icons/fa6";
-import photo from "../assets/avatar.jpg";
+import photo from "../resources/avatar.jpg";
 import '../styles/sidebar.css'
 
 export const Sidebar = () => {
@@ -12,7 +12,7 @@ export const Sidebar = () => {
             </div>
 
             <div className="sidebar-nav">
-                <a href="" className="sidebar-item">
+                <a href="/create-table" className="sidebar-item">
                     <div className="sidebar-item-content">
                         <FaChartLine />
                         <span>Option 1</span>

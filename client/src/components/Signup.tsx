@@ -16,6 +16,10 @@ export const Signup = () => {
         axios.post('http://localhost:8080/register', user)
             .then(response => {
                 console.log("Register complete");
+                if(response.status === 200) {
+                    localStorage.setItem('authToken', response.data.token);
+                    window.location.href = '/dashboard';
+                }
             })
             .catch(error => {
                 setMessage(error.response.data.message);

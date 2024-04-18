@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import '../styles/login.css';
 import { Link } from "react-router-dom";
 import axios from "axios";
+import {getAuthToken} from "../validateUser";
 
 export const Login = () => {
 
@@ -16,6 +17,11 @@ export const Login = () => {
         axios.post('http://localhost:8080/login', user)
             .then(response => {
                 console.log("Login complete");
+                if(response.status === 200) {
+                    localStorage.setItem('authToken', response.data.token);
+                    window.location.href = '/dashboard';
+                }
+                console.log(getAuthToken());
             })
             .catch((error:any) => {
                 setMessage(error.response.data.message);
