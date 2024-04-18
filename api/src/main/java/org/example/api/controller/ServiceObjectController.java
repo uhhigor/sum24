@@ -2,12 +2,14 @@ package org.example.api.controller;
 
 import org.example.api.exception.ServiceObjectServiceException;
 import org.example.api.exception.ServiceObjectStatusException;
+import org.example.api.util.OpenTsdbService;
 import org.example.api.util.ServiceObjectStatus;
 import org.example.api.service.ServiceObjectService;
 import org.example.api.model.ServiceObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -59,6 +61,17 @@ public class ServiceObjectController {
         try {
             return ResponseEntity.ok(serviceObjectService.getById(id));
         } catch (ServiceObjectServiceException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/status/last")
+    public ResponseEntity<Object> getLastStatus(@PathVariable Integer id) {
+        try {
+            OpenTsdbService openTsdbService = new OpenTsdbService(new RestTemplate());
+            return ResponseEntity.ok(openTsdbService.getLatestMetricValue(id.toString()));
+
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }

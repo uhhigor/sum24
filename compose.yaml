@@ -29,8 +29,17 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+  hbase:
+    image: dajobe/hbase
+    ports:
+      - 2181:2181
+      - 16010:16010
+    volumes:
+      - hbase_data:/hbase
   opentsdb:
     image: petergrace/opentsdb-docker
+    depends_on:
+      - hbase
     ports:
       - 4242:4242
     volumes:
@@ -38,6 +47,7 @@ services:
 volumes:
   db_data:
   opentsdb_data:
+  hbase_data:
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to

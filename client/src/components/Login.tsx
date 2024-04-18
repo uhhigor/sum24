@@ -3,12 +3,21 @@ import '../styles/login.css';
 import { Link } from "react-router-dom";
 import axios from "axios";
 import {getAuthToken} from "../validateUser";
+import { jwtDecode } from "jwt-decode";
+interface DecodedToken {
+    sub: string;
+    iat: number;
+    exp: number;
+}
 
-export const Login = () => {
+function isDecodedToken(token: any): token is DecodedToken {
+    return typeof token === 'object' && token !== null && 'sub' in token;
+}
+
+export const Login: React.FC = () =>  {
 
     const [user, setUser] = useState({ username: '', password: ''})
     const [message, setMessage] = useState("");
-    
     const handleChange = (e: any) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     }
@@ -19,6 +28,14 @@ export const Login = () => {
                 console.log("Login complete");
                 if(response.status === 200) {
                     localStorage.setItem('authToken', response.data.token);
+
+                    const decodedToken : DecodedToken = jwtDecode(response.data.token);
+                    if (isDecodedToken(decodedToken)) {
+                        const extractedUsername = decodedToken.sub;
+
+                        localStorage.setItem('username', extractedUsername);
+
+                    }
                     window.location.href = '/dashboard';
                 }
                 console.log(getAuthToken());
