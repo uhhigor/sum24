@@ -1,10 +1,10 @@
-package org.example.api.controllers;
+package org.example.api.controller;
 
-import org.example.api.exceptions.ServiceObjectServiceException;
-import org.example.api.exceptions.ServiceObjectStatusException;
-import org.example.api.logic.ServiceObjectStatus;
-import org.example.api.services.ServiceObjectService;
-import org.example.api.services.data.ServiceObject;
+import org.example.api.exception.ServiceObjectServiceException;
+import org.example.api.exception.ServiceObjectStatusException;
+import org.example.api.util.ServiceObjectStatus;
+import org.example.api.service.ServiceObjectService;
+import org.example.api.model.ServiceObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package org.example.api.services.data;
+package org.example.api.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

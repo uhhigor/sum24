@@ -1,9 +1,9 @@
-package org.example.api.services;
+package org.example.api.service;
 
-import org.example.api.exceptions.ServiceObjectException;
-import org.example.api.exceptions.ServiceObjectServiceException;
-import org.example.api.services.data.ServiceObject;
-import org.example.api.services.repositories.ServiceObjectRepository;
+import org.example.api.exception.ServiceObjectException;
+import org.example.api.exception.ServiceObjectServiceException;
+import org.example.api.model.ServiceObject;
+import org.example.api.repository.ServiceObjectRepository;
 import org.example.api.users.data.User;
 import org.example.api.users.repositories.UserRepository;
 import org.springframework.data.util.StreamUtils;

@@ -1,4 +1,4 @@
-package org.example.api.controllers;
+package org.example.api.controller;
 
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;

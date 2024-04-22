@@ -1,4 +1,4 @@
-package org.example.api.exceptions;
+package org.example.api.exception;
 
 public class ServiceObjectServiceException extends ServiceObjectException{
     public ServiceObjectServiceException(String message) {

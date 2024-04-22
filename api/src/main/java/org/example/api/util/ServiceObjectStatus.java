@@ -1,8 +1,8 @@
-package org.example.api.logic;
+package org.example.api.util;
 
-import org.example.api.exceptions.ServiceObjectStatusException;
-import org.example.api.services.data.ServiceObject;
-import org.example.api.services.data.ServiceObjectStatusResponse;
+import org.example.api.exception.ServiceObjectStatusException;
+import org.example.api.model.ServiceObject;
+import org.example.api.serviceObject.data.ServiceObjectStatusResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
