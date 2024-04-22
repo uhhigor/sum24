@@ -26,7 +26,7 @@ public class ServiceObjectService {
         return StreamUtils.createStreamFromIterator(serviceObjectRepository.findAll().iterator()).toList();
     }
 
-    public List<ServiceObject> getAllUser(Integer userId) {
+    public List<ServiceObject> getAll(Integer userId) {
         return StreamUtils.createStreamFromIterator(serviceObjectRepository.findAll().iterator())
                 .filter(service -> service.getOwner().getId().equals(userId))
                 .toList();

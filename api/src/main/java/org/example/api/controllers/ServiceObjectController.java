@@ -30,7 +30,7 @@ public class ServiceObjectController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ServiceObject>> getAllUser(@PathVariable Integer userId) {
-        return ResponseEntity.ok(serviceObjectService.getAllUser(userId));
+        return ResponseEntity.ok(serviceObjectService.getAll(userId));
     }
 
     @PostMapping("/user/{userId}")
