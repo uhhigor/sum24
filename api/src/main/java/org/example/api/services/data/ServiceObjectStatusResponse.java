@@ -1,5 +1,5 @@
 package org.example.api.services.data;
 
-public class ServiceStatusResponse {
+public class ServiceObjectStatusResponse {
 
 }
