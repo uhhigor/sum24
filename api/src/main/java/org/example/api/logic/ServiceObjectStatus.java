@@ -3,10 +3,13 @@ package org.example.api.logic;
 import org.example.api.exceptions.ServiceObjectStatusException;
 import org.example.api.services.data.ServiceObject;
 import org.example.api.services.data.ServiceObjectStatusResponse;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class ServiceObjectStatus {
     public static boolean isOnline(ServiceObject serviceObject) {
@@ -20,6 +23,16 @@ public class ServiceObjectStatus {
     }
 
     public static ServiceObjectStatusResponse getDetailedStatus(ServiceObject serviceObject) throws ServiceObjectStatusException {
-        return null;
+        try {
+            return WebClient.create().get()
+                    .uri(new URI("http://" + serviceObject.getAddress() + ":" + serviceObject.getPort() + "/status"))
+                    .retrieve()
+                    .bodyToMono(ServiceObjectStatusResponse.class)
+                    .block();
+        } catch (URISyntaxException e) {
+            throw new ServiceObjectStatusException("Cannot connect to service");
+        }
     }
+
+    public record ServiceObjectStatusResponse(float cpu_usage, float memory_usage, String message) {}
 }

@@ -4,28 +4,20 @@ import org.example.api.exceptions.ServiceObjectServiceException;
 import org.example.api.exceptions.ServiceObjectStatusException;
 import org.example.api.logic.ServiceObjectStatus;
 import org.example.api.services.ServiceObjectService;
-import org.example.api.services.data.ServiceObjectStatusResponse;
-import org.example.api.services.repositories.ServiceObjectRepository;
 import org.example.api.services.data.ServiceObject;
-import org.example.api.users.data.User;
-import org.example.api.users.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+
 @Controller
 @RequestMapping("/services")
 public class ServiceObjectController {
     private final ServiceObjectService serviceObjectService;
 
-    private final UserRepository userRepository;
-
-    public ServiceObjectController(ServiceObjectService serviceObjectService, UserRepository userRepository) {
+    public ServiceObjectController(ServiceObjectService serviceObjectService) {
         this.serviceObjectService = serviceObjectService;
-        this.userRepository = userRepository;
     }
 
     @GetMapping("/user/{userId}")
@@ -82,12 +74,15 @@ public class ServiceObjectController {
     }
 
     @GetMapping("/{id}/status/detailed")
-    public ResponseEntity<ServiceObjectStatusResponse> getDetailedServiceStatus(@PathVariable Integer id) {
+    public ResponseEntity<Object> getDetailedServiceStatus(@PathVariable Integer id) {
         try {
             ServiceObject serviceObject = serviceObjectService.getById(id);
             return ResponseEntity.ok(ServiceObjectStatus.getDetailedStatus(serviceObject));
-        } catch (ServiceObjectServiceException | ServiceObjectStatusException e) {
+        } catch (ServiceObjectServiceException e) {
             return ResponseEntity.notFound().build();
+        } catch (ServiceObjectStatusException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+
     }
 }
