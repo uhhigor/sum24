@@ -107,7 +107,7 @@ public class ServiceObject {
         }
     }
 
-    public class ServiceObjectDTO {
+    public static class ServiceObjectDTO {
         private String name;
         private String address;
         private int port;
