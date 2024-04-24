@@ -1,6 +1,7 @@
 package org.example.api;
 
 import org.example.api.exception.ServiceObjectServiceException;
+import org.example.api.exception.ServiceObjectStatusException;
 import org.example.api.model.ServiceObject;
 import org.example.api.repository.ServiceObjectRepository;
 import org.example.api.service.ServiceObjectService;
