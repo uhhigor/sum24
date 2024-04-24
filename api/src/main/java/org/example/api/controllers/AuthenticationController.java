@@ -41,4 +41,13 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ar);
         }
     }
+
+   @GetMapping("/login/{userName}")
+    public ResponseEntity<Integer> getUserId(@PathVariable String userName) {
+        User user = authenticationService.getUserId(userName);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user.getId());
+    }
 }

@@ -61,4 +61,8 @@ public class AuthenticationService {
         }
         
     }
+
+    public User getUserId(String userName) {
+        return userRepository.findByUsername(userName).orElse(null);
+    }
 }
