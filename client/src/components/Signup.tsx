@@ -6,7 +6,8 @@ import axios from "axios";
 export const Signup = () => {
 
     const [user, setUser] = useState({ username: '', password: ''})
-    
+    const [message, setMessage] = useState("");
+
     const handleChange = (e: any) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     }
@@ -21,6 +22,7 @@ export const Signup = () => {
                 }
             })
             .catch(error => {
+                setMessage(error.response.data.message);
                 console.error(error);
             })
     }
@@ -44,8 +46,11 @@ export const Signup = () => {
                 <button
                 onClick={register}
                 className="btn mt-5">Sign up</button>
-
                 <span className="mt-5">Already have account? <Link to={'/login'}>Log in</Link></span>
+                {
+                    message !== "" &&
+                    <span className="mt-4 text-danger">{message}</span>
+                }
             </div>
         </div>
     );
