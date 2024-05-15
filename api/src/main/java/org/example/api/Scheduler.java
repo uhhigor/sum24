@@ -25,10 +25,9 @@ public class Scheduler {
             String response = sendRequest.sendRequest("http://localhost:8080/services/" + service.getKey() + "/status/online");
 
             openTsdbService.sendPingResult(service.getKey(), response);
-
             if (response.equals("false") && !emailSentMap.getOrDefault(service.getKey(), false)) {
                 System.out.println("Service " + service.getKey() + " is offline");
-                String emailResponse = sendRequest.sendEmailRequest("stasiak.agnieszka567@gmail.com", service.getKey(), service.getValue());
+                String emailResponse = sendRequest.sendEmailRequest("stasiak.agnieszka567@gmail.com", service.getKey(), service.getValue().substring(1, service.getValue().length() - 1));
 
                 emailSentMap.put(service.getKey(), true);
             } else if (!emailSentMap.getOrDefault(service.getKey(), false) || response.equals("true")) {

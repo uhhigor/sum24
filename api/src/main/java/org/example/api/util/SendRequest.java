@@ -35,6 +35,7 @@ public class SendRequest {
                 + "  \"subject\": \"Service " + serviceId + " is down\","
                 + "  \"body\": \"Service "+ serviceName + " with id: " + serviceId + " is down.\""
                 + "}";
+
         return sendPostRequestWithBody(url, requestBody);
     }
 }
