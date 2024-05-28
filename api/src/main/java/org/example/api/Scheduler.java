@@ -24,10 +24,13 @@ public class Scheduler {
         Map<String, String> services = fetchServicesData();
         for (Map.Entry<String, String> service : services.entrySet()) {
             String response = sendRequest.sendRequest("http://localhost:8080/services/" + service.getKey() + "/status/online");
-
+//            System.out.println("Service " + service.getKey() + " is " + response);
             openTsdbService.sendPingResult(service.getKey(), response);
             if (response.equals("false") && !emailSentMap.getOrDefault(service.getKey(), false)) {
                 System.out.println("Service " + service.getKey() + " is offline");
+                if(email == null) {
+                    email = "admin@localhost";
+                }
                 String emailResponse = sendRequest.sendEmailRequest(email, service.getKey(), service.getValue().substring(1, service.getValue().length() - 1));
 
                 emailSentMap.put(service.getKey(), true);
