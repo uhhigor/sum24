@@ -37,7 +37,6 @@ public class ServiceObjectService {
         ServiceObject serviceObject = ServiceObject.builder()
                 .name(serviceObjectDTO.getName())
                 .address(serviceObjectDTO.getAddress())
-                .port(serviceObjectDTO.getPort())
                 .owner(user)
                 .build();
 
@@ -54,7 +53,6 @@ public class ServiceObjectService {
         ServiceObject serviceObject = getById(id);
         serviceObject.setName(serviceObjectDTO.getName());
         serviceObject.setAddress(serviceObjectDTO.getAddress());
-        serviceObject.setPort(serviceObjectDTO.getPort());
         return serviceObjectRepository.save(serviceObject);
     }
 
