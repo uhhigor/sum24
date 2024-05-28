@@ -17,7 +17,7 @@ public class ServiceObjectStatus {
                     .bodyToMono(String.class)
                     .block();
             return true;
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             return false;
         }
     }
