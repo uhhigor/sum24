@@ -37,7 +37,6 @@ public class AuthenticationController {
             return ResponseEntity.ok(ar);
         }
         else {
-            System.out.println("REturn login");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ar);
         }
     }

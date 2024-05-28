@@ -53,8 +53,8 @@ export const Login: React.FC = () =>  {
                 <input 
                 onChange={handleChange}
                 className="form-control username mt-5" 
-                placeholder="Enter username" 
-                type="text" name="username" id="username" />
+                placeholder="Enter email"
+                type="email" name="username" id="username" />
                 
                 <input
                 onChange={handleChange}
