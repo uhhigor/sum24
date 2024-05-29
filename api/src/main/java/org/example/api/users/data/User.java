@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import org.example.api.model.ServiceObject;
+import org.example.api.model.BasicServiceEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +26,7 @@ public class User implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     @JsonManagedReference
     @JsonIgnore
-    private List<ServiceObject> serviceObjects;
+    private List<BasicServiceEntity> basicServiceEntities;
 
     public Integer getId() {
         return id;
@@ -95,12 +95,12 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority(username));
     }
 
-    public List<ServiceObject> getServices() {
-        return serviceObjects.stream().toList();
+    public List<BasicServiceEntity> getServices() {
+        return basicServiceEntities.stream().toList();
     }
 
-    public void addService(ServiceObject serviceObject) {
-        serviceObjects.add(serviceObject);
+    public void addService(BasicServiceEntity basicServiceEntity) {
+        basicServiceEntities.add(basicServiceEntity);
     }
 
 }

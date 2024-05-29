@@ -1,30 +1,16 @@
 package org.example.api;
 
-import org.example.api.exception.ServiceObjectServiceException;
-import org.example.api.exception.ServiceObjectStatusException;
-import org.example.api.model.ServiceObject;
-import org.example.api.repository.ServiceObjectRepository;
-import org.example.api.service.ServiceObjectService;
+import org.example.api.repository.ServiceEntityRepository;
+import org.example.api.service.ServiceEntityService;
 import org.example.api.users.repositories.UserRepository;
-import org.example.api.util.ServiceObjectStatus;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.example.api.users.data.User;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class ServiceObjectServiceTests {
-    ServiceObjectRepository serviceObjectRepository;
+    ServiceEntityRepository serviceEntityRepository;
     UserRepository userRepository;
 
-    ServiceObjectService serviceObjectService;
+    ServiceEntityService serviceEntityService;
    /* @BeforeEach
     public void setUp() {
         serviceObjectRepository = Mockito.mock(ServiceObjectRepository.class);

@@ -1,6 +1,6 @@
 package org.example.api.exception;
 
-public class ServiceObjectServiceException extends ServiceObjectException{
+public class ServiceObjectServiceException extends ServiceEntityException {
     public ServiceObjectServiceException(String message) {
         super(message);
     }

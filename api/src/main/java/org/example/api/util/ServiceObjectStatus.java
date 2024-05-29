@@ -1,21 +1,18 @@
 package org.example.api.util;
 
-import org.example.api.exception.ServiceObjectStatusException;
-import org.example.api.model.ServiceObject;
+import org.example.api.exception.ServiceEntityStatusException;
+import org.example.api.model.BasicServiceEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 public class ServiceObjectStatus {
-    public static boolean isOnline(ServiceObject serviceObject) {
+    public static boolean isOnline(BasicServiceEntity basicServiceEntity) {
         WebClient client = WebClient.create();
         try {
             client.get()
-                    .uri(new URI(serviceObject.getAddress()))
+                    .uri(new URI(basicServiceEntity.getAddress()))
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -25,15 +22,15 @@ public class ServiceObjectStatus {
         }
     }
 
-    public static ServiceObjectStatusResponse getDetailedStatus(ServiceObject serviceObject) throws ServiceObjectStatusException {
+    public static ServiceObjectStatusResponse getDetailedStatus(BasicServiceEntity basicServiceEntity) throws ServiceEntityStatusException {
         try {
             return WebClient.create().get()
-                    .uri(new URI(serviceObject.getAddress()))
+                    .uri(new URI(basicServiceEntity.getAddress()))
                     .retrieve()
                     .bodyToMono(ServiceObjectStatusResponse.class)
                     .block();
         } catch (URISyntaxException e) {
-            throw new ServiceObjectStatusException("Cannot connect to service");
+            throw new ServiceEntityStatusException("Cannot connect to service");
         }
     }
 
