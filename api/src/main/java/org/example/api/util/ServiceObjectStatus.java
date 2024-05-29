@@ -4,6 +4,9 @@ import org.example.api.exception.ServiceObjectStatusException;
 import org.example.api.model.ServiceObject;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -17,7 +20,7 @@ public class ServiceObjectStatus {
                     .bodyToMono(String.class)
                     .block();
             return true;
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             return false;
         }
     }

@@ -5,6 +5,7 @@ import chunk from "lodash-es/chunk";
 import {Link} from "react-router-dom";
 import {getAuthToken, getUsername} from "../validateUser";
 import axios from "axios";
+import {toNumber} from "lodash";
 
 interface Service {
     id: number;
@@ -15,38 +16,42 @@ interface Service {
 export const ServicesController = () => {
     const [services, setServices] = useState<Service[]>([]);
 
-
     useEffect(() => {
-        getId().then(r => console.log('UserId fetched'));
-        fetchServices().then(r => console.log('ServicesControler fetched'));
+        const fetchUserIdAndServices = async () => {
+            await getId();
+            const storedUserId = toNumber(localStorage.getItem('userId'));
+            if (storedUserId) {
+                await fetchServices(storedUserId);
+            }
+        };
+
+        fetchUserIdAndServices().then(r => console.log("Fetched services"));
     }, []);
 
     const getId = async () => {
-        axios.get(`http://localhost:8080/login/${getUsername()}`)
-            .then(response => {
-                if (response.status === 200) {
-                    localStorage.setItem('userId', response.data);
-                    console.log("USERID" + response.data)
-                }
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        try {
+            const response = await axios.get(`http://localhost:8080/login/${getUsername()}`);
+            if (response.status === 200) {
+                localStorage.setItem('userId', response.data);
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    const fetchServices = async () => {
+    const fetchServices = async (userId: number) => {
         try {
-            const response = await fetch('http://localhost:8080/services/', {
+            const response = await fetch(`http://localhost:8080/services/user/${userId}`, {
                 headers: {
-                    'Authorization': "Bearer " + getAuthToken() as string
+                    'Authorization': "Bearer " + getAuthToken()
                 }
             });
             if (!response.ok) {
                 console.error('Failed to fetch services:', response);
+                return;
             }
             const data = await response.json();
             setServices(data);
-            console.log(getAuthToken())
         } catch (error) {
             console.error('Error fetching services:', error);
         }

@@ -13,6 +13,8 @@ import java.util.Map;
 public class Scheduler {
     SendRequest sendRequest = new SendRequest(new RestTemplate());
 
+    private String email;
+
     private Map<String, Boolean> emailSentMap = new HashMap<>();
     OpenTsdbService openTsdbService = new OpenTsdbService(new RestTemplate());
 
@@ -20,14 +22,16 @@ public class Scheduler {
     public void callServiceStatus() {
 
         Map<String, String> services = fetchServicesData();
-
         for (Map.Entry<String, String> service : services.entrySet()) {
             String response = sendRequest.sendRequest("http://localhost:8080/services/" + service.getKey() + "/status/online");
-
+//            System.out.println("Service " + service.getKey() + " is " + response);
             openTsdbService.sendPingResult(service.getKey(), response);
             if (response.equals("false") && !emailSentMap.getOrDefault(service.getKey(), false)) {
                 System.out.println("Service " + service.getKey() + " is offline");
-                String emailResponse = sendRequest.sendEmailRequest("stasiak.agnieszka567@gmail.com", service.getKey(), service.getValue().substring(1, service.getValue().length() - 1));
+                if(email == null) {
+                    email = "admin@localhost";
+                }
+                String emailResponse = sendRequest.sendEmailRequest(email, service.getKey(), service.getValue().substring(1, service.getValue().length() - 1));
 
                 emailSentMap.put(service.getKey(), true);
             } else if (!emailSentMap.getOrDefault(service.getKey(), false) || response.equals("true")) {
@@ -50,6 +54,13 @@ public class Scheduler {
         }
 
         return idMap;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getEmail() {
+        return email;
     }
 
 }

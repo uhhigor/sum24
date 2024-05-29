@@ -71,7 +71,7 @@ export const Signup = () => {
                 <h1 className="mt-5 ms-4 align-self-start">SIGN UP</h1>
                 <input
                     onChange={handleChange}
-                    className={`form-control username mt-5 ${emailValid ? '' : 'is-invalid'}`}
+                    className={`form-control username mt-5`}
                     placeholder="Enter email"
                     type="email" name="username" id="username"/>
 
