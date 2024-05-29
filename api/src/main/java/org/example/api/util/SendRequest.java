@@ -18,7 +18,7 @@ public class SendRequest {
         return response.getBody();
     }
 
-    public ServiceObjectStatus.ServiceObjectStatusResponse sendDetailedRequest(String url) {
+    /*public ServiceObjectStatus.ServiceObjectStatusResponse sendDetailedRequest(String url) {
         WebClient.ResponseSpec responseSpec = WebClient.create().get().uri(url).retrieve();
 
         // Check the content type of the response
@@ -31,7 +31,7 @@ public class SendRequest {
             System.err.println("Unexpected content type: " + contentType);
             return null;
         }
-    }
+    }*/
 
 
     private String sendPostRequestWithBody(String url, String requestBody) {

@@ -1,13 +1,13 @@
 package org.example.api;
 
-import org.example.api.repository.ServiceEntityRepository;
+import org.example.api.repository.BasicServiceEntityRepository;
 import org.example.api.service.ServiceEntityService;
 import org.example.api.users.repositories.UserRepository;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class ServiceObjectServiceTests {
-    ServiceEntityRepository serviceEntityRepository;
+    BasicServiceEntityRepository basicServiceEntityRepository;
     UserRepository userRepository;
 
     ServiceEntityService serviceEntityService;
