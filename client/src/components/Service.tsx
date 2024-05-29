@@ -11,7 +11,6 @@ interface Service {
     id: number;
     name: string;
     address: string;
-    port: string;
 }
 
 interface ServiceProps {
@@ -21,9 +20,14 @@ interface ServiceProps {
 export const Service: React.FC<ServiceProps> = ({index}) => {
 
     const [service, setService] = useState<Service | null>(null);
-    const [status, setStatus] = useState(null);
+    const [status, setStatus] = useState<number | undefined>(undefined);
 
     useEffect(() => {
+        const savedStatus = localStorage.getItem(`serviceStatus${index}`);
+        if (savedStatus) {
+            setStatus(JSON.parse(savedStatus));
+        }
+
         fetchServiceData();
         const intervalId = setInterval(fetchServiceStatus, 30 * 1000);
         return () => clearInterval(intervalId);
@@ -59,6 +63,7 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
                 return;
             }
             setStatus(response.data);
+            localStorage.setItem(`serviceStatus${index}`, JSON.stringify(response.data));
 
         } catch (error: any) {
             if (axios.isCancel(error)) {
@@ -101,14 +106,12 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
     const propsToEdit = {
         name: service?.name,
         address: service?.address,
-        port: service?.port
     }
 
     return (
         <div className="m-2 service-container">
             <h5>{service?.name}</h5>
             <p>{service?.address}</p>
-            <p>{service?.port}</p>
             <Row className="align-items-center justify-content-center">
                 <Col>
                     <div>Status:</div>

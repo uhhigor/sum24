@@ -3,11 +3,11 @@ import "../styles/login.css";
 import "../styles/servicesForms.css";
 import axios from "axios";
 import {Link} from "react-router-dom";
-import {getAuthToken, getUserId, getUsername} from "../validateUser";
+import {getAuthToken, getUserId} from "../validateUser";
 
 export const AddService = () => {
 
-    const [service, setService] = useState({name: '', address: '', port: ''})
+    const [service, setService] = useState({name: '', address: ''})
 
     const handleChange = (e: any) => {
         console.log(e.target.name);
@@ -51,11 +51,6 @@ export const AddService = () => {
                     placeholder="Enter address"
                     type="text" name="address" id="addr"/>
 
-                <input
-                    onChange={handleChange}
-                    className="form-control password mt-4"
-                    placeholder="Enter port"
-                    type="text" name="port" id="por"/>
                 <div className="row mt-5">
                     <div className="col">
                         <button
