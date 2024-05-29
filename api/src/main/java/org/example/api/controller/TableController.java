@@ -21,27 +21,30 @@ public class TableController {
         int numberOfRows = Integer.parseInt(Rows);
 
         List<String> columns = Arrays.asList("timestamp", "cpu", "storage", "memory");
-        List<List<Double>> rows = new ArrayList<>();
+        List<List<Object>> rows = new ArrayList<>();
         Map<String, List<OpenTsdbService.MetricData>> allMetrics = openTsdbService.getAllMetrics(id);
         List<OpenTsdbService.MetricData> metricDataList = new ArrayList<>();
 
         for (int i = 0; i < numberOfRows; i++) {
-            List<Double> row = new ArrayList<>();
+            List<Object> row = new ArrayList<>();
             for (String metric : columns) {
-                metricDataList = allMetrics.get(metric);
-                if (metricDataList != null) {
-                    if (metricDataList.size() > i) {
-                        if (metric.equals("timestamp")) {
-                            row.add(Double.parseDouble(metricDataList.get(i).timestamp()));
-                        } else {
-                            row.add(metricDataList.get(i).value());
-                        }
+                if (metric.equals("timestamp")) {
+                    List<OpenTsdbService.MetricData> timestampDataList = allMetrics.get("cpu");
+                    if (timestampDataList != null && timestampDataList.size() > i) {
+                        row.add(timestampDataList.get(i).timestamp());
+                    } else {
+                        row.add("0");
                     }
                 } else {
-                    row.add(metric.equals("timestamp") ? 0L : 0.0);
+                    metricDataList = allMetrics.get(metric);
+                    if (metricDataList != null && metricDataList.size() > i) {
+                        row.add(metricDataList.get(i).value());
+                    } else {
+                        row.add(0.0);
+                    }
                 }
             }
-            // Add the row to the rows
+            // Dodaj wiersz do wierszy
             rows.add(row);
         }
 

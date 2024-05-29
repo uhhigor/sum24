@@ -27,6 +27,7 @@ export const TableCreation = () => {
         axios.get(`http://localhost:8080/tables/table/${service.id}?numberOfRows=${rowsToShow}`)
             .then(response => {
                 setTableData(response.data);
+                console.log(response.data);
             })
             .catch(error => {
                 console.error(error);
