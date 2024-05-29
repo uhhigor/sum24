@@ -35,12 +35,10 @@ public class Scheduler {
                     email = "admin@localhost";
                 }
                 String emailResponse = sendRequest.sendEmailRequest(email, service.getKey(), service.getValue().substring(1, service.getValue().length() - 1));
-                    emailSentMap.put(service.getKey(), true);
-                } else if (!emailSentMap.getOrDefault(service.getKey(), false) || response.equals("true")) {
-                    emailSentMap.put(service.getKey(), false);
-                }
-            } catch (Exception e) {
-                System.out.println("An error occurred while processing service " + service.getKey() + ": " + e.getMessage());
+
+                emailSentMap.put(service.getKey(), true);
+            } else if (!emailSentMap.getOrDefault(service.getKey(), false) || response.equals("true")) {
+                emailSentMap.put(service.getKey(), false);
             }
         }
     }
