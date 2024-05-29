@@ -8,6 +8,7 @@ import {AddService} from "./components/AddService";
 import {TableCreation} from "./components/TableCreation";
 import {Main} from "./components/Main";
 import EditService from "./components/EditService";
+import { Charts } from './components/Charts';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path='/' element={<Main/>}/>
                 <Route path='/edit-service/:index' element={<EditService name="" address="" port="" />}/>
                 <Route path='/create-table' element={ <TableCreation /> } />
+                <Route path='/charts' element={ <Charts /> } />
             </Routes>
         </BrowserRouter>
     );

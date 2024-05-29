@@ -7,12 +7,10 @@ export const Dashboard = () => {
     return (
         <div>
             <div className="row">
-                <div className="col-2">
+                <div className="col-2 position-fixed">
                     <Sidebar />
                 </div>
-
-                {/* Workhours */}
-                <div className="col-10">
+                <div className="col-10 ms-auto">
                     <div className="row">
                         <div className="col-6">
                             <h1 className="ms-3 mt-3">DASHBOARD</h1>
@@ -20,9 +18,7 @@ export const Dashboard = () => {
                     </div>
                     <ServicesController />
                 </div>
-                {/* Workhours */}
             </div>
-            {/* row */}
         </div>
     )
 }

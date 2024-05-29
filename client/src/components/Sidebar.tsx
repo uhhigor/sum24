@@ -1,4 +1,4 @@
-import { FaChartLine, FaGaugeHigh, FaPowerOff } from "react-icons/fa6";
+import { FaChartLine, FaGaugeHigh, FaPowerOff, FaTable } from "react-icons/fa6";
 import photo from "../resources/avatar.jpg";
 import '../styles/sidebar.css'
 import {getUsername} from "../validateUser";
@@ -19,18 +19,16 @@ export const Sidebar = () => {
             <div className="sidebar-nav">
                 <a href="/create-table" className="sidebar-item">
                     <div className="sidebar-item-content">
-                        <FaChartLine />
+                        <FaTable />
                         <span>Services data</span>
                     </div>
                 </a>
                 <a
-                href="#"
-                data-bs-toggle="modal" 
-                data-bs-target="#template" 
+                href="/charts"
                 className="sidebar-item">
                     <div className="sidebar-item-content">
-                        <FaGaugeHigh />
-                        <span>Option 2</span>
+                        <FaChartLine />
+                        <span>Charts</span>
                     </div>
                 </a>
                 <a className="sidebar-item signout">
