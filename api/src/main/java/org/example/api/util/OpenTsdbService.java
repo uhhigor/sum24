@@ -136,7 +136,7 @@ public class OpenTsdbService {
         return allMetrics;
     }
 
-    public void sendUsageMetrics(String serviceId, ServiceObjectStatus.Usage usage) {
+    /*public void sendUsageMetrics(String serviceId, ServiceObjectStatus.Usage usage) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -151,7 +151,7 @@ public class OpenTsdbService {
         sendMetric(cpuMetric);
         sendMetric(memoryMetric);
         sendMetric(storageMetric);
-    }
+    }*/
 
     private String createMetricJson(String metricName, double value, long timestamp, String metric) {
         return "{\"metric\":\"" + metricName + "\"," +

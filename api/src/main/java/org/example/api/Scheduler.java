@@ -2,7 +2,6 @@ package org.example.api;
 
 import org.example.api.util.OpenTsdbService;
 import org.example.api.util.SendRequest;
-import org.example.api.util.ServiceObjectStatus;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -57,14 +56,14 @@ public class Scheduler {
 
                 HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
 
-                ResponseEntity<ServiceObjectStatus.ServiceObjectStatusResponse> responseEntity = restTemplate.exchange(
-                        "http://localhost:8080/services/" + service.getKey() + "/status/detailed",
-                        HttpMethod.GET,
-                        entity,
-                        ServiceObjectStatus.ServiceObjectStatusResponse.class);
+                //ResponseEntity<ServiceObjectStatus.ServiceObjectStatusResponse> responseEntity = restTemplate.exchange(
+                //        "http://localhost:8080/services/" + service.getKey() + "/status/detailed",
+                //        HttpMethod.GET,
+                //        entity,
+                //        ServiceObjectStatus.ServiceObjectStatusResponse.class);
 
-                ServiceObjectStatus.ServiceObjectStatusResponse response = responseEntity.getBody();
-                openTsdbService.sendUsageMetrics(service.getKey(), response.usage());
+                //ServiceObjectStatus.ServiceObjectStatusResponse response = responseEntity.getBody();
+                //openTsdbService.sendUsageMetrics(service.getKey(), response.usage());
             } catch (Exception e) {
                 System.out.println("An error occurred while processing service " + service.getKey() + ": " + e.getMessage());
             }
