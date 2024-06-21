@@ -26,6 +26,7 @@ public class OpenTsdbService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
+
         String requestBody = "{\"metric\":\"service.status." + serviceId.toLowerCase() + "\"," +
                 "\"timestamp\":" + System.currentTimeMillis() / 1000 + "," +
                 "\"value\":" + (serviceStatus.equals("true") ? 1 : 0) + "," +
