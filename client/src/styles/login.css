@@ -23,22 +23,28 @@ div.login-container div.login-form {
 }
 
 div.login-container div.login-form input.username,
-div.login-container div.login-form input.password  {
+div.login-container div.login-form input.password,
+textarea.additionalFields {
     width: 80%;
     background-color: #4d1663;
     border: none;
     color: #c1d3d9;
+    resize: none;
 }
 
 div.login-container div.login-form input.username:focus,
-div.login-container div.login-form input.password:focus {
+div.login-container div.login-form input.password:focus,
+textarea.additionalFields:focus {
     outline: none;
     border-color: transparent;
     box-shadow: none;
+    background-color: #4d1663;
+    color: #c1d3d9;
 }
 
 div.login-container div.login-form input.username::placeholder,
-div.login-container div.login-form input.password::placeholder {
+div.login-container div.login-form input.password::placeholder,
+textarea.additionalFields::placeholder {
     color: #c1d3d967;
 }
 

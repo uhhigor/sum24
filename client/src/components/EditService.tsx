@@ -1,35 +1,44 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import "../styles/login.css";
 import "../styles/servicesForms.css";
 import axios from "axios";
-import {Link, useParams, useLocation} from "react-router-dom";
-import {getAuthToken} from "../validateUser";
+import { Link, useParams, useLocation } from "react-router-dom";
+import { getAuthToken } from "../validateUser";
 
-interface EditServiceProps {
+interface Service {
     name: string;
     address: string;
+    fields: string[];
 }
 
 function EditService() {
-    const {index} = useParams();
+    const { index } = useParams();
     const location = useLocation();
-    const { name, address } = location.state as EditServiceProps;
-    const [service, setService] = useState<EditServiceProps>({name: "", address: ""});
+    const [service, setService] = useState<Service>({ name: '', address: '', fields: [] });
+    const [additionalFields, setAdditionalFields] = useState<string>('');
 
-    useEffect(() => {
-        setService({ name, address });
-    }, [name, address]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setService(prevService => ({
-            ...prevService,
-            [name]: value
-        }));
-    };
+
+        if (name === 'additionalFields') {
+            const filteredValue = value.replace(/[^a-zA-Z0-9,]/g, '');
+            setAdditionalFields(filteredValue);
+
+            const fieldsArray = filteredValue.split(',').filter((field: string) => field.trim() !== '');
+            setService({ ...service, fields: fieldsArray });
+        } else {
+            setService({ ...service, [name]: value });
+        }
+        console.log("service" + service);
+    }
 
     const editService = () => {
-        axios.put(`http://localhost:8080/service/${index}`, service, {
+        const serviceData: Partial<Service> = { ...service };
+        if (service.fields && service.fields.length === 0) {
+            delete serviceData.fields;
+        }
+
+        axios.put(`http://localhost:8080/service/${index}`, serviceData, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': "Bearer " + getAuthToken()
@@ -66,6 +75,14 @@ function EditService() {
                     type="text"
                     name="address"
                     id="addr"
+                />
+                <textarea
+                    id="additionalFields"
+                    className="form-control mt-4 additionalFields"
+                    placeholder="Additional fields"
+                    name="additionalFields"
+                    value={additionalFields}
+                    onChange={handleChange}
                 />
                 <div className="row mt-5">
                     <div className="col">

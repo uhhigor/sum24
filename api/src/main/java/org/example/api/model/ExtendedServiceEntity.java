@@ -26,6 +26,10 @@ public class ExtendedServiceEntity extends BasicServiceEntity {
         return Collections.unmodifiableList(fields);
     }
 
+    public void setFields(Collection<String> fields) {
+        this.fields = new ArrayList<>(fields);
+    }
+
     public void addField(String field) {
         fields.add(field);
     }

@@ -5,6 +5,7 @@ import org.example.api.exception.ServiceEntityException;
 import org.example.api.exception.ServiceEntityNotFoundException;
 import org.example.api.exception.UserNotFoundException;
 import org.example.api.model.BasicServiceEntity;
+import org.example.api.model.ExtendedServiceEntity;
 import org.example.api.model.ServiceEntity;
 import org.example.api.model.ServiceEntityBuilder;
 import org.example.api.service.ServiceEntityService;
@@ -46,20 +47,25 @@ public class ServiceEntityController {
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        try {
-            ServiceEntity service = new ServiceEntityBuilder(BasicServiceEntity.class)
-                                    .setName(request.name)
-                                    .setAddress(request.address)
-                                    .setOwner(user)
-                                    .build();
-            service = serviceEntityService.save(service);
-            return ResponseEntity.ok(new ServiceEntityDto.Response("Service added successfully", service));
-        } catch (ServiceEntityException e) {
-            return ResponseEntity.badRequest().body(new ServiceEntityDto.Response(e.getMessage()));
+        ServiceEntity service;
+        if (request.fields == null || request.fields.isEmpty()) {
+            service = new ServiceEntityBuilder(BasicServiceEntity.class)
+                    .setName(request.name)
+                    .setAddress(request.address)
+                    .setOwner(user)
+                    .build();
+        } else {
+            service = new ServiceEntityBuilder(ExtendedServiceEntity.class)
+                    .setName(request.name)
+                    .setAddress(request.address)
+                    .setOwner(user)
+                    .setFields(request.fields)
+                    .build();
         }
-
-
+        service = serviceEntityService.save(service);
+        return ResponseEntity.ok(new ServiceEntityDto.Response("Service added successfully", service));
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<ServiceEntityDto.Response> update(@RequestBody ServiceEntityDto.Request request, @PathVariable Integer id) {
@@ -74,6 +80,13 @@ public class ServiceEntityController {
         }
         if(request.address != null) {
             service.setAddress(request.address);
+        }
+        if(request.fields != null) {
+            if(service instanceof ExtendedServiceEntity) {
+                ((ExtendedServiceEntity) service).setFields(request.fields);
+            } else {
+                return ResponseEntity.badRequest().body(new ServiceEntityDto.Response("Fields can only be set for ExtendedServiceEntity"));
+            }
         }
 
         service = serviceEntityService.save(service);
