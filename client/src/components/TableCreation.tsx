@@ -35,7 +35,7 @@ export const TableCreation = () => {
     };
 
     const getServices = () => {
-        axios.get(`http://localhost:8080/services/user/${getUserId()}`)
+        axios.get(`http://localhost:8080/service/user/${getUserId()}`)
             .then(response => {
                 setServices(response.data);
                 console.log(response.data);

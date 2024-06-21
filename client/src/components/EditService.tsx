@@ -30,7 +30,7 @@ function EditService(props: EditServiceProps) {
     }, [props]);
 
     const editService = () => {
-        axios.put(`http://localhost:8080/services/${index}`, service, {
+        axios.put(`http://localhost:8080/service/${index}`, service, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': "Bearer " + getAuthToken() as string

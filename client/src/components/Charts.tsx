@@ -21,7 +21,7 @@ export const Charts = () => {
     }
 
     const fetchTableData = () => {
-        axios.get(`http://localhost:8080/services/${service.id}/status/detailed`)
+        axios.get(`http://localhost:8080/service/${service.id}`)
             .then(response => {
                 console.log(response.data);
             })
@@ -31,7 +31,7 @@ export const Charts = () => {
     };
 
     const getServices = () => {
-        axios.get(`http://localhost:8080/services/user/${getUserId()}`)
+        axios.get(`http://localhost:8080/service/user/${getUserId()}`)
             .then(response => {
                 setServices(response.data);
                 setService(response.data[0]);

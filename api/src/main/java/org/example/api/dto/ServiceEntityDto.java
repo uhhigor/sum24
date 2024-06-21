@@ -39,12 +39,14 @@ public class ServiceEntityDto {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Data {
+        public Integer id;
         public String name;
         public String address;
         public Integer userId;
         public List<String> fields;
 
         public Data(ServiceEntity entity) {
+            this.id = entity.getId();
             this.name = entity.getName();
             this.address = entity.getAddress();
             this.userId = entity.getOwner().getId();
