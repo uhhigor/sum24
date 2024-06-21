@@ -35,7 +35,7 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
 
     const fetchServiceData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/services/${index}`, {
+            const response = await fetch(`http://localhost:8080/service/${index}`, {
                 headers: {
                     'Authorization': "Bearer " + getAuthToken() as string
                 }
@@ -53,7 +53,7 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
 
     const fetchServiceStatus = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/services/${index}/status/last`, {
+            const response = await axios.get(`http://localhost:8080/service/${index}/status/last`, {
                 headers: {
                     'Authorization': "Bearer " + getAuthToken() as string
                 }
@@ -86,7 +86,7 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
     }
 
     const deleteService = () => {
-        axios.delete(`http://localhost:8080/services/${index}`, {
+        axios.delete(`http://localhost:8080/service/${index}`, {
             headers: {
                 'Authorization': "Bearer " + getAuthToken() as string
             }

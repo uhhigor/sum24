@@ -41,7 +41,7 @@ export const ServicesController = () => {
 
     const fetchServices = async (userId: number) => {
         try {
-            const response = await fetch(`http://localhost:8080/services/user/${userId}`, {
+            const response = await fetch(`http://localhost:8080/service/user/${userId}`, {
                 headers: {
                     'Authorization': "Bearer " + getAuthToken()
                 }
@@ -51,7 +51,8 @@ export const ServicesController = () => {
                 return;
             }
             const data = await response.json();
-            setServices(data);
+            console.log(data.services);
+            setServices(data.services);
         } catch (error) {
             console.error('Error fetching services:', error);
         }

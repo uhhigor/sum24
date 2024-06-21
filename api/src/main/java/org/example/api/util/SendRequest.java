@@ -13,8 +13,12 @@ public class SendRequest {
     }
 
 
-    public String sendRequest(String url) {
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+    public String sendRequest(String url, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         return response.getBody();
     }
 
@@ -34,9 +38,10 @@ public class SendRequest {
     }*/
 
 
-    private String sendPostRequestWithBody(String url, String requestBody) {
+    private String sendPostRequestWithBody(String url, String requestBody, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + token);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
@@ -45,7 +50,7 @@ public class SendRequest {
         return response.getBody();
     }
 
-    public String sendEmailRequest (String to, String serviceId, String serviceName) {
+    public String sendEmailRequest (String to, String serviceId, String serviceName, String token) {
         String url = "http://localhost:8080/email/send";
         String requestBody =   "{"
                 + "  \"to\": \"" + to + "\","
@@ -53,6 +58,6 @@ public class SendRequest {
                 + "  \"body\": \"Service "+ serviceName + " with id: " + serviceId + " is down.\""
                 + "}";
 
-        return sendPostRequestWithBody(url, requestBody);
+        return sendPostRequestWithBody(url, requestBody, token);
     }
 }

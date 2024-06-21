@@ -9,11 +9,17 @@ export const Sidebar = () => {
         window.location.href = '/login';
     }
 
+    function printUsername() {
+        // @ts-ignore
+        return getUsername().substring(0, getUsername().indexOf("@"))
+    }
+
     return (
         <div className="sidebar-container">
             <div className="sidebar-header">
                 <img src={photo} alt="Avatar" />
-                <span className="username">{getUsername()}</span>
+                <span className="username">{printUsername()}</span>
+
             </div>
 
             <div className="sidebar-nav">

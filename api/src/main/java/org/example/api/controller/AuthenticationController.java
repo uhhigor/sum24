@@ -36,7 +36,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody User request) {
         AuthenticationResponse ar = authenticationService.login(request);
-        
+        scheduler.setToken(ar.getToken());
         if (ar.getToken() != null) {
             return ResponseEntity.ok(ar);
         }
@@ -52,6 +52,7 @@ public class AuthenticationController {
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(user.getId());
+       scheduler.setUserId(user.getId());
+       return ResponseEntity.ok(user.getId());
     }
 }

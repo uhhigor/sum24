@@ -16,7 +16,7 @@ export const AddService = () => {
     }
 
     const addService = () => {
-        axios.post(`http://localhost:8080/services/user/${getUserId()}`, service, {
+        axios.post(`http://localhost:8080/service/user/${getUserId()}`, service, {
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': "Bearer " + getAuthToken() as string
