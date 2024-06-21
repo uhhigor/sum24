@@ -1,70 +1,75 @@
-import React, {useEffect, useState} from "react";
-import {FcApproval, FcHighPriority} from "react-icons/fc";
-import {Col, Row} from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { FcApproval, FcHighPriority } from "react-icons/fc";
+import { Col, Row } from 'react-bootstrap';
 import '../styles/service.css';
-import {Link} from "react-router-dom";
-import {getAuthToken, getUserId, getUsername} from "../validateUser";
-import axios, {AxiosError} from "axios";
-
+import { Link } from "react-router-dom";
+import { getAuthToken } from "../validateUser";
+import axios, { AxiosError } from "axios";
 
 interface Service {
     id: number;
     name: string;
     address: string;
+    userId: number;
 }
 
 interface ServiceProps {
     index: number;
 }
 
-export const Service: React.FC<ServiceProps> = ({index}) => {
-
+export const Service: React.FC<ServiceProps> = ({ index }) => {
     const [service, setService] = useState<Service | null>(null);
     const [status, setStatus] = useState<number | undefined>(undefined);
 
     useEffect(() => {
         const savedStatus = localStorage.getItem(`serviceStatus${index}`);
+        console.log('Saved status:', savedStatus);
         if (savedStatus) {
             setStatus(JSON.parse(savedStatus));
         }
 
-        fetchServiceData();
-        const intervalId = setInterval(fetchServiceStatus, 30 * 1000);
+        fetchServiceData(index);
+        const intervalId = setInterval(() => fetchServiceStatus(index), 30 * 1000);
         return () => clearInterval(intervalId);
-    }, []);
+    }, [index]);
 
-    const fetchServiceData = async () => {
+    const fetchServiceData = async (index: number) => {
         try {
             const response = await fetch(`http://localhost:8080/service/${index}`, {
                 headers: {
-                    'Authorization': "Bearer " + getAuthToken() as string
+                    'Authorization': "Bearer " + getAuthToken()
                 }
             });
             if (!response.ok) {
                 console.error('Failed to fetch service:', response);
+                return;
             }
             const data = await response.json();
-            setService(data);
+            console.log('Fetched service data:', data);
+
+            if (data && typeof data === 'object' && data.service) {
+                setService(data.service);
+            } else {
+                console.error('Invalid data format:', data);
+            }
         } catch (error) {
             console.error('Error fetching service:', error);
         }
     };
 
-
-    const fetchServiceStatus = async () => {
+    const fetchServiceStatus = async (index: number) => {
         try {
             const response = await axios.get(`http://localhost:8080/service/${index}/status/last`, {
                 headers: {
-                    'Authorization': "Bearer " + getAuthToken() as string
+                    'Authorization': "Bearer " + getAuthToken()
                 }
             });
-            if (response.status != 200) {
+            if (response.status !== 200) {
                 console.error('Failed to fetch service status:', response);
                 return;
             }
             setStatus(response.data);
             localStorage.setItem(`serviceStatus${index}`, JSON.stringify(response.data));
-
         } catch (error: any) {
             if (axios.isCancel(error)) {
                 console.error('Request canceled:', error.message);
@@ -74,12 +79,11 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
         }
     };
 
-
     function imageRender() {
         if (status === 1) {
-            return <FcApproval size={20}/>
+            return <FcApproval size={20} />
         } else if (status === 0) {
-            return <FcHighPriority size={20}/>
+            return <FcHighPriority size={20} />
         } else {
             return <div>Unknown</div>
         }
@@ -88,19 +92,18 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
     const deleteService = () => {
         axios.delete(`http://localhost:8080/service/${index}`, {
             headers: {
-                'Authorization': "Bearer " + getAuthToken() as string
+                'Authorization': "Bearer " + getAuthToken()
             }
-
         })
             .then(response => {
                 if (response.status === 200) {
-                    console.log("deleted item")
+                    console.log("Deleted item");
                     window.location.reload();
                 }
             })
             .catch(error => {
                 console.error(error);
-            })
+            });
     }
 
     const propsToEdit = {
@@ -127,10 +130,8 @@ export const Service: React.FC<ServiceProps> = ({index}) => {
                 <Link to={`/edit-service/${index}`} state={propsToEdit}>
                     <button className="btn mx-3">Edit</button>
                 </Link>
-                <button className="btn" onClick={() => deleteService()}>Delete</button>
+                <button className="btn" onClick={deleteService}>Delete</button>
             </div>
-
-
         </div>
     );
 };

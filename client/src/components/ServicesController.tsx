@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {Container, Row, Col} from 'react-bootstrap';
-import {Service} from "./Service";
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col } from 'react-bootstrap';
+import { Service } from "./Service";
 import chunk from "lodash-es/chunk";
-import {Link} from "react-router-dom";
-import {getAuthToken, getUsername} from "../validateUser";
+import { Link } from "react-router-dom";
+import { getAuthToken, getUsername } from "../validateUser";
 import axios from "axios";
-import {toNumber} from "lodash";
+import { toNumber } from "lodash";
 
 interface Service {
     id: number;
@@ -13,7 +13,7 @@ interface Service {
     address: string;
 }
 
-export const ServicesController = () => {
+export const ServicesController: React.FC = () => {
     const [services, setServices] = useState<Service[]>([]);
 
     useEffect(() => {
@@ -34,8 +34,12 @@ export const ServicesController = () => {
             if (response.status === 200) {
                 localStorage.setItem('userId', response.data);
             }
-        } catch (error) {
-            console.error(error);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error(error.message);
+            } else {
+                console.error('An unexpected error occurred', error);
+            }
         }
     }
 
@@ -51,10 +55,18 @@ export const ServicesController = () => {
                 return;
             }
             const data = await response.json();
-            console.log(data.services);
-            setServices(data.services);
-        } catch (error) {
-            console.error('Error fetching services:', error);
+            console.log('Fetched services:', data);
+            if (data && Array.isArray(data.services)) {
+                setServices(data.services);
+            } else {
+                console.error('Unexpected data format:', data);
+            }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error('Error fetching services:', error.message);
+            } else {
+                console.error('An unexpected error occurred', error);
+            }
         }
     };
 
@@ -67,7 +79,7 @@ export const ServicesController = () => {
                 <Row key={rowIndex}>
                     {rowServices.map((service: Service, colIndex: number) => (
                         <Col key={colIndex} className="cols">
-                            <Service key={colIndex} index={service.id}/>
+                            <Service key={service.id} index={service.id} />
                         </Col>
                     ))}
                 </Row>

@@ -29,8 +29,7 @@ public class Scheduler {
         }
         Map<String, String> services = fetchServicesData();
         System.out.println("Services: " + services);
-        for (Map.Entry<String, String> service : services.entrySet()) {
-            String response = sendRequest.sendRequest("http://localhost:8080/service/" + service.getKey(), this.token);
+        for (Map.Entry<String, String> service : services.entrySet()) {String response = sendRequest.sendRequest("http://localhost:8080/service/" + service.getKey(), this.token);
 
             System.out.println("Service " + service.getKey() + " is " + response);
 
