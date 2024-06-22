@@ -54,7 +54,7 @@ public class ServiceEntityService {
         return result;
     }
 
-    public ServiceEntity save(ServiceEntity serviceEntity) {
+    public synchronized ServiceEntity save(ServiceEntity serviceEntity) {
         if(serviceEntity instanceof ExtendedServiceEntity service) {
             return extendedServiceEntityRepository.save(service);
         } else if(serviceEntity instanceof BasicServiceEntity service) {

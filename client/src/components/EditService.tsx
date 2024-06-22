@@ -1,21 +1,32 @@
-import React, { useEffect, useState, ChangeEvent } from "react";
+import React, { useEffect, useState, ChangeEvent, useRef } from "react";
 import "../styles/login.css";
 import "../styles/servicesForms.css";
 import axios from "axios";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { getAuthToken } from "../validateUser";
 
-interface Service {
+interface EditServiceProps {
     name: string;
     address: string;
-    fields: string[];
+    fields?: string[];
 }
 
 function EditService() {
     const { index } = useParams();
     const location = useLocation();
-    const [service, setService] = useState<Service>({ name: '', address: '', fields: [] });
-    const [additionalFields, setAdditionalFields] = useState<string>('');
+    const { name, address, fields = [] } = location.state as EditServiceProps;
+    const [service, setService] = useState<EditServiceProps>({ name: "", address: "", fields: [] });
+    const [additionalFields, setAdditionalFields] = useState<string>("");
+
+    const previousFieldsRef = useRef<string[]>(fields);
+
+    useEffect(() => {
+        if (JSON.stringify(fields) !== JSON.stringify(previousFieldsRef.current)) {
+            setService({ name, address, fields });
+            setAdditionalFields(fields.join(','));
+            previousFieldsRef.current = fields;
+        }
+    }, [name, address, fields]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -33,7 +44,7 @@ function EditService() {
     }
 
     const editService = () => {
-        const serviceData: Partial<Service> = { ...service };
+        const serviceData: Partial<EditServiceProps> = { ...service };
         if (service.fields && service.fields.length === 0) {
             delete serviceData.fields;
         }
