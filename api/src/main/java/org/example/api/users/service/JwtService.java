@@ -40,7 +40,7 @@ public class JwtService {
 
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
@@ -56,7 +56,7 @@ public class JwtService {
                 .getPayload();
     }
 
-    private SecretKey getSecretKey() {
+    public SecretKey getSecretKey() {
         String KEY = "a48c4f753b96783cc1882c1f5f12dff2f867a3a0cff5c48e6eaad1c7f021321a";
         byte[] keyBytes = Decoders.BASE64.decode(KEY);
         return Keys.hmacShaKeyFor(keyBytes);

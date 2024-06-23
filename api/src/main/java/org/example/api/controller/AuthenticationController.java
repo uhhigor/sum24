@@ -55,4 +55,11 @@ public class AuthenticationController {
        scheduler.setUserId(user.getId());
        return ResponseEntity.ok(user.getId());
     }
+
+    @DeleteMapping ("/user/{userName}")
+    public ResponseEntity<Integer> deleteUser(@PathVariable String userName) {
+        authenticationService.deleteUser(userName);
+        return (ResponseEntity<Integer>) ResponseEntity.ok();
+    }
+
 }
