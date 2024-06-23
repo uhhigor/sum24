@@ -1,100 +1,87 @@
 package org.example.api;
 
-import org.example.api.util.OpenTsdbService;
+import org.example.api.exception.ServiceEntityStatusException;
+import org.example.api.exception.UserNotFoundException;
+import org.example.api.model.ExtendedServiceEntity;
+import org.example.api.model.ServiceEntity;
+import org.example.api.service.ServiceEntityService;
 import org.example.api.util.SendRequest;
-import org.springframework.http.*;
+import org.example.api.util.OpenTsdbService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class Scheduler {
-    SendRequest sendRequest = new SendRequest(new RestTemplate());
+    SendRequest sendRequest;
+    private OpenTsdbService openTsdbService;
+    private final ServiceEntityService serviceEntityService;
+
+    @Autowired
+    public Scheduler(ServiceEntityService serviceEntityService) {
+        this.sendRequest = new SendRequest(new RestTemplate());
+        this.openTsdbService = new OpenTsdbService(new RestTemplate(), serviceEntityService);
+        this.serviceEntityService = serviceEntityService;
+    }
 
     private String email;
     private String token;
     private int userId;
 
     private Map<String, Boolean> emailSentMap = new HashMap<>();
-    OpenTsdbService openTsdbService = new OpenTsdbService(new RestTemplate());
 
     @Scheduled(fixedRate = 30000)
+    @Transactional
     public void callServiceData() {
         if(email == null) {
             return;
         }
-        Map<String, String> services = fetchServicesData();
-        System.out.println("Services: " + services);
-        for (Map.Entry<String, String> service : services.entrySet()) {String response = sendRequest.sendRequest("http://localhost:8080/service/" + service.getKey(), this.token);
+        try {
+            List<ServiceEntity> serviceEntityList = this.serviceEntityService.getAllByUser(this.userId).stream().toList();
+            for (ServiceEntity serviceEntity : serviceEntityList) {
+                Map<String, String> tags = new HashMap<>();
+                tags.put("serviceId", String.valueOf(serviceEntity.getId()));
+                tags.put("serviceName", serviceEntity.getName());
 
-            System.out.println("Service " + service.getKey() + " is " + response);
+                boolean status = serviceEntityService.isOnlineStatus(serviceEntity);
+                long timestamp = System.currentTimeMillis() / 1000L;
+                openTsdbService.sendStatus("service.status", timestamp, status, tags);
 
-//            openTsdbService.sendPingResult(service.getKey(), response);
-//            if (response.equals("false") && !emailSentMap.getOrDefault(service.getKey(), false)) {
-//                System.out.println("Service " + service.getKey() + " is offline");
-//                if(email == null) {
-//                    email = "admin@localhost";
-//                }
-//                String emailResponse = sendRequest.sendEmailRequest(email, service.getKey(), service.getValue().substring(1, service.getValue().length() - 1));
-//
-//                emailSentMap.put(service.getKey(), true);
-//            } else if (!emailSentMap.getOrDefault(service.getKey(), false) || response.equals("true")) {
-//                emailSentMap.put(service.getKey(), false);
-//            }
+                if (serviceEntity instanceof ExtendedServiceEntity) {
+                    try {
+                        Map<String, Object> detailedStatus = serviceEntityService.getDetailedStatus((ExtendedServiceEntity) serviceEntity);
+                        Integer timeunix = (Integer) detailedStatus.get("timeunix");
+                        openTsdbService.sendDetailedStatus("service", timeunix, detailedStatus, tags);
+                    } catch (ServiceEntityStatusException e) {
+                        System.out.println("Failed to get detailed status for service: " + serviceEntity.getId());
+                    }
+                }
+
+                if (!status && !emailSentMap.getOrDefault(serviceEntity.getId(), false)) {
+                    System.out.println("Service " + serviceEntity.getId() + " is offline");
+                    if(email == null) {
+                        email = "admin@localhost";
+                    }
+                    String emailResponse = sendRequest.sendEmailRequest(email, serviceEntity.getId().toString(), serviceEntity.getName(), token);
+
+                    emailSentMap.put(serviceEntity.getId().toString(), true);
+                } else if (!emailSentMap.getOrDefault(serviceEntity.getId(), false) || status) {
+                    emailSentMap.put(serviceEntity.getId().toString(), false);
+                }
+            }
+        } catch (UserNotFoundException e) {
+            System.out.println("User Not Found");
         }
+        openTsdbService.getAllMetricsOfService(752);
     }
 
-//    @Scheduled(fixedRate = 30000)
-//    public void sendServiceData() {
-//
-//        Map<String, String> services = fetchServicesData();
-//
-//        for (Map.Entry<String, String> service : services.entrySet()) {
-//            try {
-//                RestTemplate restTemplate = new RestTemplate();
-//                HttpHeaders headers = new HttpHeaders();
-//                headers.setContentType(MediaType.APPLICATION_JSON);
-//                headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//                HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-//
-////                ResponseEntity<Service.ServiceObjectStatusResponse> responseEntity = restTemplate.exchange(
-////                        "http://localhost:8080/services/" + service.getKey(),
-////                        HttpMethod.GET,
-////                        entity,
-////                        ServiceObjectStatus.ServiceObjectStatusResponse.class);
-////
-////                ServiceObjectStatus.ServiceObjectStatusResponse response = responseEntity.getBody();
-//                //openTsdbService.sendUsageMetrics(service.getKey(), response.usage());
-//            } catch (Exception e) {
-//                System.out.println("An error occurred while processing service " + service.getKey() + ": " + e.getMessage());
-//            }
-//        }
-//    }
 
-    private Map<String, String> fetchServicesData() {
-        String response = sendRequest.sendRequest("http://localhost:8080/service/user/" + this.userId, this.token);
-        System.out.println("Response: " + response);
-        String[] jsonObjects = response.substring(12, response.length() - 2).split("},\\{");
-        if (jsonObjects.length == 0) {
-            return new HashMap<>();
-        }
-
-        Map<String, String> idMap = new HashMap<>();
-
-        for (String jsonObject : jsonObjects) {
-            String[] pairs = jsonObject.split(",");
-            String[] id = pairs[0].split(":");
-            String[] name = pairs[1].split(":");
-            idMap.put(id[1].trim(), name[1].trim());
-        }
-
-        return idMap;
-    }
 
     public void setEmail(String email) {
         this.email = email;

@@ -10,14 +10,14 @@ import org.example.api.repository.BasicServiceEntityRepository;
 import org.example.api.repository.ExtendedServiceEntityRepository;
 import org.example.api.users.data.User;
 import org.example.api.users.repositories.UserRepository;
+import org.hibernate.Hibernate;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ServiceEntityService {
@@ -32,21 +32,22 @@ public class ServiceEntityService {
         this.extendedServiceEntityRepository = extendedServiceEntityRepository;
         this.userRepository = userRepository;
     }
-    public List<ServiceEntity> getAllByUser(Integer userId) throws UserNotFoundException {
+    @Transactional
+    public Set<ServiceEntity> getAllByUser(Integer userId) throws UserNotFoundException {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        List<ServiceEntity> result = new ArrayList<>();
+        Set<ServiceEntity> result = new HashSet<>();
 
         Iterable<BasicServiceEntity> basicServiceEntities = basicServiceEntityRepository.findAll();
         for (ServiceEntity serviceEntity : basicServiceEntities) {
-            if (serviceEntity.getOwner().equals(user)) {
+            if (serviceEntity.getOwner().getId().equals(user.getId())) {
                 result.add(serviceEntity);
             }
         }
 
         Iterable<ExtendedServiceEntity> extendedServiceEntities = extendedServiceEntityRepository.findAll();
         for (ServiceEntity serviceEntity : extendedServiceEntities) {
-            if (serviceEntity.getOwner().equals(user)) {
+            if (serviceEntity.getOwner().getId().equals(user.getId())) {
                 result.add(serviceEntity);
             }
         }
@@ -97,6 +98,7 @@ public class ServiceEntityService {
     }
 
     public Map<String, Object> getDetailedStatus(ExtendedServiceEntity serviceEntity) throws ServiceEntityStatusException {
+        Hibernate.initialize(serviceEntity.getFields());
         String json;
         try {
             json = WebClient.create().get()

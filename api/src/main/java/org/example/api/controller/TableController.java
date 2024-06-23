@@ -1,55 +1,81 @@
 package org.example.api.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.api.util.OpenTsdbService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tables")
 public class TableController {
 
+    OpenTsdbService openTsdbService;
+
+    @Autowired
+    public TableController(OpenTsdbService openTsdbService) {
+        this.openTsdbService = openTsdbService;
+    }
+
     @GetMapping("/table/{id}")
-    public Map<String, Object> getTableData(@RequestParam("numberOfRows") String Rows, @PathVariable String id) {
+    public Map<String, Object> getTableData(@RequestParam("numberOfRows") String Rows, @PathVariable Integer id) {
         Map<String, Object> tableData = new HashMap<>();
-        OpenTsdbService openTsdbService = new OpenTsdbService(new RestTemplate());
         int numberOfRows = Integer.parseInt(Rows);
 
-        List<String> columns = Arrays.asList("timestamp", "cpu", "storage", "memory");
-        List<List<Object>> rows = new ArrayList<>();
-        Map<String, List<OpenTsdbService.MetricData>> allMetrics = openTsdbService.getAllMetrics(id);
-        List<OpenTsdbService.MetricData> metricDataList = new ArrayList<>();
+        String allMetricsJson = openTsdbService.getAllMetricsOfService(id);
 
-        for (int i = 0; i < numberOfRows; i++) {
-            List<Object> row = new ArrayList<>();
-            for (String metric : columns) {
-                if (metric.equals("timestamp")) {
-                    List<OpenTsdbService.MetricData> timestampDataList = allMetrics.get("cpu");
-                    if (timestampDataList != null && timestampDataList.size() > i) {
-                        row.add(timestampDataList.get(i).timestamp());
-                    } else {
-                        row.add("0");
-                    }
-                } else {
-                    metricDataList = allMetrics.get(metric);
-                    if (metricDataList != null && metricDataList.size() > i) {
-                        row.add(metricDataList.get(i).value());
-                    } else {
-                        row.add(0.0);
-                    }
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode metricsArray = objectMapper.readTree(allMetricsJson);
+
+            Set<String> columns = new LinkedHashSet<>();
+            Map<Long, Map<String, Object>> rowsData = new HashMap<>();
+
+            for (JsonNode metricNode : metricsArray) {
+                String metricName = metricNode.path("tags").path("metricName").asText();
+                JsonNode dps = metricNode.path("dps");
+
+                for (Iterator<String> it = dps.fieldNames(); it.hasNext(); ) {
+                    String timestampStr = it.next();
+                    Long timestamp = Long.parseLong(timestampStr);
+                    Object value = dps.path(timestampStr).asDouble(); // Assuming all values are doubles
+
+                    rowsData.computeIfAbsent(timestamp, k -> new HashMap<>()).put(metricName, value);
                 }
-            }
-            // Dodaj wiersz do wierszy
-            rows.add(row);
-        }
 
-        tableData.put("columns", columns);
-        tableData.put("rows", rows);
+                columns.add(metricName);
+            }
+
+            columns.add("timeunix");
+            List<String> columnsList = new ArrayList<>(columns);
+            if (columnsList.remove("timeunix")) {
+                columnsList.add(0, "timeunix");
+            }
+
+            for (Long timestamp : rowsData.keySet()) {
+                rowsData.get(timestamp).put("timeunix", timestamp);
+            }
+
+            List<Map<String, Object>> limitedRows = rowsData.entrySet().stream()
+                    .sorted((e1, e2) -> {
+                        Long time1 = (Long) e1.getValue().get("timeunix");
+                        Long time2 = (Long) e2.getValue().get("timeunix");
+                        return time2.compareTo(time1);
+                    })
+                    .limit(numberOfRows)
+                    .map(Map.Entry::getValue)
+                    .collect(Collectors.toList());
+
+            tableData.put("columns", columnsList);
+            tableData.put("rows", limitedRows);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return tableData;
     }

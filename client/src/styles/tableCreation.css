@@ -35,3 +35,19 @@ div.fetchTableDataForm .btn:hover {
     background-color: #592a9d;
     color: #270334;
 }
+
+table.table-dark {
+    --bs-table-color: #c1d3d9;
+    --bs-table-bg: #300E3E;
+    --bs-table-border-color: #4d5154;
+    --bs-table-striped-bg: #3c134d;
+    --bs-table-striped-color: #fff;
+    --bs-table-active-bg: #2f1455;
+    --bs-table-active-color: #fff;
+    color: #c1d3d9;
+}
+
+div.columns-check {
+    display: flex;
+    flex-direction: column;
+}

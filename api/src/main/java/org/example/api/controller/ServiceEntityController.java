@@ -12,12 +12,14 @@ import org.example.api.service.ServiceEntityService;
 import org.example.api.users.data.User;
 import org.example.api.users.repositories.UserRepository;
 import org.example.api.util.OpenTsdbService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/service")
@@ -26,6 +28,7 @@ public class ServiceEntityController {
 
     private final UserRepository userRepository;
 
+    @Autowired
     public ServiceEntityController(ServiceEntityService serviceEntityService, UserRepository userRepository) {
         this.serviceEntityService = serviceEntityService;
         this.userRepository = userRepository;
@@ -34,8 +37,8 @@ public class ServiceEntityController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<ServiceEntityDto.ListResponse> getAllUser(@PathVariable Integer userId) {
         try {
-            List<ServiceEntity> result = serviceEntityService.getAllByUser(userId);
-            return ResponseEntity.ok(new ServiceEntityDto.ListResponse(result));
+            Set<ServiceEntity> result = serviceEntityService.getAllByUser(userId);
+            return ResponseEntity.ok(new ServiceEntityDto.ListResponse(result.stream().toList()));
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -48,6 +51,17 @@ public class ServiceEntityController {
             return ResponseEntity.notFound().build();
         }
         ServiceEntity service;
+
+        try {
+            List<ServiceEntity> services = serviceEntityService.getAllByUser(user.getId()).stream().toList();
+            for (ServiceEntity s : services) {
+                if (s.getAddress().equals(request.address)) {
+                    return ResponseEntity.badRequest().build();
+                }
+            }
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
         if (request.fields == null || request.fields.isEmpty()) {
             service = new ServiceEntityBuilder(BasicServiceEntity.class)
                     .setName(request.name)
@@ -116,9 +130,7 @@ public class ServiceEntityController {
     @GetMapping("/{id}/status/last")
     public ResponseEntity<Object> getLastStatus(@PathVariable Integer id) {
         try {
-            OpenTsdbService openTsdbService = new OpenTsdbService(new RestTemplate());
-            return ResponseEntity.ok(openTsdbService.getLatestMetricValue(id.toString()));
-
+            return ResponseEntity.ok(serviceEntityService.isOnlineStatus(serviceEntityService.getById(id)));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

@@ -1,182 +1,170 @@
 package org.example.api.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.*;
+import org.example.api.exception.ServiceEntityNotFoundException;
+import org.example.api.model.ExtendedServiceEntity;
+import org.example.api.model.ServiceEntity;
+import org.example.api.service.ServiceEntityService;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.*;
 
+@Service
 public class OpenTsdbService {
 
     private final String putUrl = "http://opentsdb:4242/api/put";
     private final String queryUrl = "http://opentsdb:4242/api/query";
 
     private final RestTemplate restTemplate;
+    private final ServiceEntityService serviceEntityService;
 
-    public OpenTsdbService(RestTemplate restTemplate) {
+    @Autowired
+    public OpenTsdbService(RestTemplate restTemplate, ServiceEntityService serviceEntityService) {
         this.restTemplate = restTemplate;
-
+        this.serviceEntityService = serviceEntityService;
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 
-    public void sendPingResult(String serviceId, String serviceStatus) {
+    public void sendStatus(String metric, long timestamp, boolean status, Map<String, String> tags) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("metric", metric);
+        data.put("timestamp", timestamp);
+        data.put("value", status ? 1 : 0);
+        data.put("tags", tags);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody;
+        try {
+            requestBody = objectMapper.writeValueAsString(data);
+        } catch (JsonProcessingException e) {
+            System.out.println("Error while creating request body: " + e.getMessage());
+            return;
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
-
-        String requestBody = "{\"metric\":\"service.status." + serviceId.toLowerCase() + "\"," +
-                "\"timestamp\":" + System.currentTimeMillis() / 1000 + "," +
-                "\"value\":" + (serviceStatus.equals("true") ? 1 : 0) + "," +
-                "\"tags\":{\"status\":\"" + (serviceStatus.equals("true") ? "up" : "down") + "\", \"type\":\"status\"}}";
-
-        headers.setContentLength(requestBody.getBytes().length);
-
+        headers.setContentLength(requestBody.length());
         HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(putUrl, HttpMethod.POST, request, String.class);
-
-        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-            System.out.println("Ping result sent successfully for service: " + serviceId);
-        } else {
-            System.err.println("Failed to send ping result for service: " + serviceId + ". Response: " + response.getStatusCode());
-        }
+        restTemplate.postForObject(putUrl, request, String.class);
     }
 
-    public int getLatestMetricValue(String serviceId) {
-        String query = "{\n" +
-                "    \"start\": " + ((System.currentTimeMillis() / 1000) - 6000) + ",\n" +
-                "    \"end\": " + System.currentTimeMillis() / 1000 + ",\n" +
-                "    \"queries\": [\n" +
-                "        {\n" +
-                "            \"aggregator\": \"sum\",\n" +
-                "            \"metric\": \"service.status." + serviceId.toLowerCase() + "\",\n" +
-                "            \"tags\": {\n" +
-                "                \"type\": \"status\"\n" +
-                "            }\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    public void sendDetailedStatus(String metric, long timestamp, Map<String, Object> detailedStatus, Map<String, String> tags) {
+        detailedStatus.forEach((key, value) -> {
+            if (value instanceof Map) {
+                Map<String, Object> metricsMap = (Map<String, Object>) value;
+                metricsMap.forEach((metricKey, metricValue) -> {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("metric", metric);
+                    data.put("timestamp", timestamp);
+                    data.put("value", metricValue);
+                    tags.put("metricName", metricKey);
+                    data.put("tags", tags);
 
-        HttpEntity<String> request = new HttpEntity<>(query, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(queryUrl, HttpMethod.POST, request, String.class);
-        System.out.println(response.getBody());
-        if (response.getStatusCode() == HttpStatus.OK) {
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                JsonNode root = mapper.readTree(response.getBody());
-                JsonNode dpsNode = root.get(0).get("dps");
-                Iterator<String> iterator = dpsNode.fieldNames();
-                String lastTimestamp = "";
-                while (iterator.hasNext()) {
-                    lastTimestamp = iterator.next();
-                }
-                int latestValue = dpsNode.get(lastTimestamp).asInt();
-                return latestValue;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return 0;
-            }
-        } else {
-            System.err.println("Failed to retrieve latest metric value. Response: " + response.getStatusCode());
-            return 0;
-        }
-    }
-
-    public Map<String, List<MetricData>> getAllMetrics(String serviceId) {
-        String[] metrics = {"cpu", "memory", "storage"};
-        Map<String, List<MetricData>> allMetrics = new HashMap<>();
-
-        for (String metric : metrics) {
-            String query = "{\n" +
-                    "    \"start\": 0,\n" +
-                    "    \"end\": " + System.currentTimeMillis() / 1000 + ",\n" +
-                    "    \"queries\": [\n" +
-                    "        {\n" +
-                    "            \"aggregator\": \"sum\",\n" +
-                    "            \"metric\": \"service.usage." + serviceId.toLowerCase() + "." + metric + "\",\n" +
-                    "            \"tags\": {\n" +
-                    "                \"type\": \"" + metric + "\"\n" +
-                    "            }\n" +
-                    "        }\n" +
-                    "    ]\n" +
-                    "}";
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<String> request = new HttpEntity<>(query, headers);
-
-            ResponseEntity<String> response = restTemplate.exchange(queryUrl, HttpMethod.POST, request, String.class);
-            if (response.getStatusCode() == HttpStatus.OK) {
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    JsonNode root = mapper.readTree(response.getBody());
-                    JsonNode dpsNode = root.get(0).get("dps");
-
-                    List<MetricData> metricDataList = new ArrayList<>();
-                    Iterator<String> iterator = dpsNode.fieldNames();
-                    while (iterator.hasNext()) {
-                        String timestamp = iterator.next();
-                        Double value = dpsNode.get(timestamp).asDouble();
-                        metricDataList.add(new MetricData(timestamp, value));
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String requestBody;
+                    try {
+                        requestBody = objectMapper.writeValueAsString(data);
+                    } catch (JsonProcessingException e) {
+                        System.out.println("Error while creating request body: " + e.getMessage());
+                        return;
                     }
-                    allMetrics.put(metric, metricDataList);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    headers.setContentLength(requestBody.length());
+                    HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+
+                    restTemplate.postForObject(putUrl, request, String.class);
+                });
             } else {
-                System.err.println("Failed to retrieve metrics for " + metric + ". Response: " + response.getStatusCode());
+                Map<String, Object> data = new HashMap<>();
+                data.put("metric", metric);
+                data.put("timestamp", timestamp);
+                if (value instanceof Number) {
+                    data.put("value", value);
+                } else {
+                    data.put("value", 0);
+                }
+                tags.put("metricName", key);
+                data.put("tags", tags);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String requestBody;
+                try {
+                    requestBody = objectMapper.writeValueAsString(data);
+                } catch (JsonProcessingException e) {
+                    System.out.println("Error while creating request body: " + e.getMessage());
+                    return;
+                }
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setContentLength(requestBody.length());
+                HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+
+                restTemplate.postForObject(putUrl, request, String.class);
             }
+        });
+    }
+
+    public String getAllMetricsOfService(Integer serviceId) {
+        try {
+            String query = "{serviceId=" + serviceId + ",metricName=";
+            ServiceEntity s = this.serviceEntityService.getById(serviceId);
+            if (s instanceof ExtendedServiceEntity) {
+                ExtendedServiceEntity extendedServiceEntity = (ExtendedServiceEntity) s;
+                List<String> fields = extendedServiceEntity.getFields();
+                if (!fields.isEmpty()) {
+                    for (String field : fields) {
+                        query += field + "|";
+                    }
+                }
+                StringBuilder stringBuilder = new StringBuilder(query);
+                stringBuilder.setCharAt(query.length() - 1, '}');
+                query = stringBuilder.toString();
+                String fullUrl = queryUrl + "?start=0&m=sum:service{query}";
+                ResponseEntity<String> response = restTemplate.getForEntity(fullUrl, String.class, query);
+                return response.getBody();
+            }
+
+        } catch (ServiceEntityNotFoundException e) {
+            System.out.println("Service not found!");
+        } catch (HttpClientErrorException e) {
+            System.out.println("No data for given field!");
         }
 
-        return allMetrics;
+        return "";
     }
 
-    /*public void sendUsageMetrics(String serviceId, ServiceObjectStatus.Usage usage) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    public boolean getLastStatusOfService(Integer serviceId) {
+        String query = "{serviceId=" + serviceId + "}";
+        String fullUrl = queryUrl + "?start=0&m=sum:service.status{query}";
+        ResponseEntity<String> response = restTemplate.getForEntity(fullUrl, String.class, query);
+        String jsonString = response.getBody();
+        JSONArray responseArray = new JSONArray(jsonString);
 
-        long timestamp = System.currentTimeMillis() / 1000;
+        JSONObject responseObject = responseArray.getJSONObject(0);
+        JSONObject dpsObject = responseObject.getJSONObject("dps");
 
-        // Prepare the metrics
-        String cpuMetric = createMetricJson("service.usage."+serviceId+".cpu", usage.cpu(), timestamp, "cpu");
-        String memoryMetric = createMetricJson("service.usage."+serviceId+".memory", usage.memory(), timestamp, "memory");
-        String storageMetric = createMetricJson("service.usage."+serviceId+".storage", usage.storage(), timestamp, "storage");
+        List<String> keys = new ArrayList<>(dpsObject.keySet());
+        keys.sort(Comparator.reverseOrder());
 
-        // Send the metrics
-        sendMetric(cpuMetric);
-        sendMetric(memoryMetric);
-        sendMetric(storageMetric);
-    }*/
+        String newestTimestamp = keys.get(0);
+        int value = dpsObject.getInt(newestTimestamp);
 
-    private String createMetricJson(String metricName, double value, long timestamp, String metric) {
-        return "{\"metric\":\"" + metricName + "\"," +
-                "\"timestamp\":" + timestamp + "," +
-                "\"value\":" + value + "," +
-                "\"tags\":{\"type\":\""+metric+"\"}}";
+        return value == 1;
     }
-
-    private void sendMetric(String metricJson) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setContentLength(metricJson.getBytes().length);
-
-        HttpEntity<String> request = new HttpEntity<>(metricJson, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(putUrl, HttpMethod.POST, request, String.class);
-
-        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-            System.out.println("Metric sent successfully: " + metricJson);
-        } else {
-            System.err.println("Failed to send metric. Response: " + response.getStatusCode());
-        }
-    }
-
-    public record MetricData(String timestamp, Double value) {}
 
 }

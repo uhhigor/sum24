@@ -29,14 +29,14 @@ export const Sidebar = () => {
                         <span>Services data</span>
                     </div>
                 </a>
-                <a
+                {/* <a
                 href="/charts"
                 className="sidebar-item">
                     <div className="sidebar-item-content">
                         <FaChartLine />
                         <span>Charts</span>
                     </div>
-                </a>
+                </a> */}
                 <a className="sidebar-item signout">
                     <div className="sidebar-item-content">
                         <FaPowerOff />

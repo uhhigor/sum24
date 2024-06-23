@@ -47,7 +47,7 @@ export const AddService = () => {
                 console.log("Service added");
                 console.log(serviceData);
                 if (response.status === 200) {
-                    // window.location.href = '/dashboard';
+                    window.location.href = '/dashboard';
                 }
             })
             .catch(error => {

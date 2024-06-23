@@ -19,7 +19,7 @@ interface ServiceProps {
 
 export const Service: React.FC<ServiceProps> = ({ index }) => {
     const [service, setService] = useState<Service | null>(null);
-    const [status, setStatus] = useState<number | undefined>(undefined);
+    const [status, setStatus] = useState<boolean | undefined>(undefined);
 
     useEffect(() => {
         const savedStatus = localStorage.getItem(`serviceStatus${index}`);
@@ -80,9 +80,9 @@ export const Service: React.FC<ServiceProps> = ({ index }) => {
     };
 
     function imageRender() {
-        if (status === 1) {
+        if (status === true) {
             return <FcApproval size={20} />
-        } else if (status === 0) {
+        } else if (status === false) {
             return <FcHighPriority size={20} />
         } else {
             return <div>Unknown</div>
