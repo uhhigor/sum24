@@ -27,4 +27,8 @@ public class AuthenticationResponse {
     public String getMessage() {
         return message;
     }
+
+    public int getStatus() {
+        return status;
+    }
 }

@@ -10,4 +10,6 @@ public interface ServiceEntity {
     void setName(String name);
     void setAddress(String address);
     void setOwner(User user);
+
+    void setId(Integer id);
 }

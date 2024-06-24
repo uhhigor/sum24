@@ -1,6 +1,7 @@
 package org.example.api.users.service;
 
 import java.util.Optional;
+
 import org.example.api.users.data.AuthenticationResponse;
 import org.example.api.users.data.User;
 import org.example.api.users.repositories.UserRepository;
@@ -53,16 +54,22 @@ public class AuthenticationService {
             }
 
             User user = optionalUser.get();
-            
+
             String token = jwtService.generateToken(user);
             return new AuthenticationResponse(token);
         } catch (AuthenticationException e) {
             return new AuthenticationResponse(404);
         }
-        
+
     }
 
     public User getUserId(String userName) {
         return userRepository.findByUsername(userName).orElse(null);
+    }
+
+    public void deleteUser(String username) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            userRepository.delete(userRepository.findByUsername(username).get());
+        }
     }
 }

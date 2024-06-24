@@ -52,4 +52,8 @@ public class BasicServiceEntity implements ServiceEntity {
     }
 
     public void setOwner(User user) {this.owner = user;}
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
