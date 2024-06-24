@@ -3,3 +3,7 @@
     padding: 20px 30px;
     border-radius: 8px;
 }
+
+.service-container p {
+    word-wrap: break-word;
+}
