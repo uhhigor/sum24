@@ -39,9 +39,10 @@ public class Scheduler {
     @Scheduled(fixedRate = 30000)
     @Transactional
     public void callServiceData() {
-        if(email == null) {
+        if (email == null) {
             return;
         }
+
         try {
             List<ServiceEntity> serviceEntityList = this.serviceEntityService.getAllByUser(this.userId).stream().toList();
             for (ServiceEntity serviceEntity : serviceEntityList) {
@@ -65,7 +66,7 @@ public class Scheduler {
 
                 if (!status && !emailSentMap.getOrDefault(serviceEntity.getId(), false)) {
                     System.out.println("Service " + serviceEntity.getId() + " is offline");
-                    if(email == null) {
+                    if (email == null) {
                         email = "admin@localhost";
                     }
                     String emailResponse = sendRequest.sendEmailRequest(email, serviceEntity.getId().toString(), serviceEntity.getName(), token);
@@ -78,10 +79,7 @@ public class Scheduler {
         } catch (UserNotFoundException e) {
             System.out.println("User Not Found");
         }
-        openTsdbService.getAllMetricsOfService(752);
     }
-
-
 
     public void setEmail(String email) {
         this.email = email;
